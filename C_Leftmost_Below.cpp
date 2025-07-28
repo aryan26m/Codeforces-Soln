@@ -94,6 +94,7 @@ void solve() {
     vi a = inputArray(n);
     int ma=a[n-1];
     bool check=true;
+    //Hello
     for(int i=n-2;i>=0;i--){
         if((a[i]*2) > ma){
             ma=max(ma,a[i]);
