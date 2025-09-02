@@ -80,31 +80,59 @@ int nCr(int n, int r, int p = MOD) {
 // Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
-
 }
+
 // Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-//Solve Function
+
+// Solve Function
 void solve() {
-    int n,k;
-    cin >> n >>k;
-    vi h = inputArray(n);
-    vi s = inputArray(n);
-    vector<int> dp(k+1, 0);
-    for(int i = 0; i < n; i++) {
-        int w = h[i];
-        int p = s[i];
-        for(int j = k; j >= w; j--) {
-            dp[j] = max(dp[j], p + dp[j - w]);
+    int n;
+    string s;
+    cin>>n;
+    cin>>s;
+    bool ans=true;
+     if (s[0] == '1') {
+        if (n < 3 || s[1] != '1' || s[2] != '1'){
+            ans=false;
+        };
+    }
+    
+    if (s[n-1] == '1') {
+        if (n < 3 || s[n-2] != '1' || s[n-3] != '1') {
+            ans=false;
+        };
+    }
+
+    for (int i = 0; i < n;) {
+        if (s[i] == '1') {
+            int j = i;
+            while (j < n && s[j] == '1') j++;
+            int len = j - i;
+            if (len < 3) {
+                ans= false;
+            }
+            i = j;
+        } else {
+            i++;
         }
     }
-    cout << dp[k];
-    // return ;
+    if(ans){
+        cout<<"Yes"<<endl;
+    }
+    else{
+        
+        cout<<"No"<<endl;
+    }
+
 }
 
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
+    return 0;
 }

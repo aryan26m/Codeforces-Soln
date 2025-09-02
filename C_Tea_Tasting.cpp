@@ -80,31 +80,87 @@ int nCr(int n, int r, int p = MOD) {
 // Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
-
 }
+
 // Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-//Solve Function
+int search(const vi&a,const vi&pre , int l, int h){
+int ans=-1;
+int rem;
+if(l==0){
+    rem=0;
+}
+else{
+    rem=pre[l-1];
+}
+int find=a[l];
+while(l<=h)
+{
+    int m=(l+h)/2;
+    if((pre[m]-rem) >= find){
+        ans=m;
+        h=m-1;
+    }
+    else{
+        l=m+1;
+    }
+}
+// cout<<ans<<endl;
+return ans;
+}
+
 void solve() {
-    int n,k;
-    cin >> n >>k;
-    vi h = inputArray(n);
-    vi s = inputArray(n);
-    vector<int> dp(k+1, 0);
-    for(int i = 0; i < n; i++) {
-        int w = h[i];
-        int p = s[i];
-        for(int j = k; j >= w; j--) {
-            dp[j] = max(dp[j], p + dp[j - w]);
+    int n;
+    cin>>n;
+    vi v=inputArray(n);
+    vi c=inputArray(n);
+   vi pre(n);
+    pre[0]=c[0];
+
+    for(int i=1;i<n;i++){
+        pre[i]=pre[i-1]+c[i];
+    }
+   vi ans(n);
+   vi ans2(n);
+
+//    ans[0]=min(c[0],v[0]);
+    for(int i=0;i<n;i++){
+        int idx=search(v,pre,i,n-1);
+        if(idx==-1){
+            ans[i]+=1;
+        }
+        else{
+            if(idx==i){
+                ans2[i]+=min(v[i],c[i]);
+            }
+            else{
+                ans[i]++;
+                ans[idx]--;
+                if(i-1<0){
+                    ans2[idx]+=abs(v[i]-pre[idx-1]);
+                }
+                else{
+                    ans2[idx]+=abs(v[i]-(pre[idx-1]-pre[i-1]));
+                }
+            }
         }
     }
-    cout << dp[k];
-    // return ;
+    // printArray(ans2);
+    for(int i=1;i<n;i++){
+        ans[i]=ans[i-1]+ans[i];
+    }
+    for(int i=0;i<n;i++){
+        ans[i]=ans2[i]+(ans[i]*c[i]);
+    }
+    printArray(ans);
 }
 
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
+    return 0;
 }

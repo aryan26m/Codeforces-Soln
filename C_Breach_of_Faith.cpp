@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#define debug(x) cerr << #x << 
 #define int long long
 #define pb push_back
 #define all(x) (x).begin(), (x).end()
@@ -12,7 +13,7 @@ const int MOD = 1e9 + 7;
 const int INF = 1e18;
 
 // Input array
-vi inputArray(int n) {
+vi enterv(int n) {
     vi a(n);
     for (int &x : a) cin >> x;
     return a;
@@ -80,31 +81,61 @@ int nCr(int n, int r, int p = MOD) {
 // Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
-
 }
+
 // Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-//Solve Function
+
+// Solv..ne Function
 void solve() {
-    int n,k;
-    cin >> n >>k;
-    vi h = inputArray(n);
-    vi s = inputArray(n);
-    vector<int> dp(k+1, 0);
-    for(int i = 0; i < n; i++) {
-        int w = h[i];
-        int p = s[i];
-        for(int j = k; j >= w; j--) {
-            dp[j] = max(dp[j], p + dp[j - w]);
+    // Write your logic here
+    int n;
+    cin>>n;
+    vi v = enterv(2*n);
+    int maxi=0;
+    int k=2*n;
+    sort(v.begin(),v.end());
+    int ans=v[k-1];
+    set<int> s;
+    rep(i,0,k){
+        s.insert(v[i]);
+        maxi=max(maxi,v[i]);
+    }
+    int even=0;
+    int odd=0;
+    vector <int> evn;
+    vector <int> od;
+    rep(i,0,k-1){
+        if(i%2==0){
+            evn.pb(v[i]);
+            even+=v[i];
+        }
+        else{
+            od.pb(v[i]);
+            odd+=v[i];
         }
     }
-    cout << dp[k];
-    // return ;
+    int x=maxi+even-odd;
+    if((s.find(x))==s.end()){
+        cout<<maxi<<" ";
+        od.pb(x);
+        int i=0;
+        while(i<od.size() || i<evn.size()){
+            cout<<od[i]<<" "<<evn[i]<<" ";
+            i++;
+        }
+
+        cout<<endl;
+           
+    }
 }
 
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
+    return 0;
 }

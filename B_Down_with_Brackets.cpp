@@ -11,26 +11,22 @@ using namespace std;
 const int MOD = 1e9 + 7;
 const int INF = 1e18;
 
-// Input array
 vi inputArray(int n) {
     vi a(n);
     for (int &x : a) cin >> x;
     return a;
 }
 
-// Debug print
 void printArray(const vi &a) {
     for (int x : a) cout << x << ' ';
     cout << '\n';
 }
 
-// GCD
 int gcd(int a, int b) {
     if (b == 0) return a;
     return gcd(b, a % b);
 }
 
-// Prime check
 bool isPrime(int n) {
     if (n < 2) return false;
     if (n == 2 || n == 3) return true;
@@ -41,7 +37,6 @@ bool isPrime(int n) {
     return true;
 }
 
-// Binary Search
 bool binarySearch(const vi &a, int target) {
     int low = 0, high = a.size() - 1;
     while (low <= high) {
@@ -53,7 +48,6 @@ bool binarySearch(const vi &a, int target) {
     return false;
 }
 
-// nCr using Fermat's Little Theorem
 int power(int x, int y, int p) {
     int res = 1;
     x %= p;
@@ -77,34 +71,48 @@ int nCr(int n, int r, int p = MOD) {
     return fact[n] * modInverse(fact[r], p) % p * modInverse(fact[n - r], p) % p;
 }
 
-// Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
-
 }
-// Frequency Map Update
+
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-//Solve Function
+
 void solve() {
-    int n,k;
-    cin >> n >>k;
-    vi h = inputArray(n);
-    vi s = inputArray(n);
-    vector<int> dp(k+1, 0);
-    for(int i = 0; i < n; i++) {
-        int w = h[i];
-        int p = s[i];
-        for(int j = k; j >= w; j--) {
-            dp[j] = max(dp[j], p + dp[j - w]);
+    string s;
+    cin>>s;
+    int n=s.size();
+bool bal=true;
+int cnt=0;
+    for(int i=1;i<n-1;i++){
+        if (s[i]=='('){
+            cnt++;
+        }
+        else{
+            cnt--;
+        }
+        if(cnt<0){
+            bal=false;
+            break;
         }
     }
-    cout << dp[k];
-    // return ;
+    if(cnt!=0){
+        bal=false;
+    }
+
+    if(bal){
+        cout<<"NO"<<endl;
+    }
+    else{
+        cout<<"YES"<<endl;
+    }
 }
 
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
+    return 0;
 }

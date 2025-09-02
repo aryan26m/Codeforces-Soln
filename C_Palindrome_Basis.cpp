@@ -80,31 +80,43 @@ int nCr(int n, int r, int p = MOD) {
 // Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
-
 }
+
 // Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-//Solve Function
-void solve() {
-    int n,k;
-    cin >> n >>k;
-    vi h = inputArray(n);
-    vi s = inputArray(n);
-    vector<int> dp(k+1, 0);
-    for(int i = 0; i < n; i++) {
-        int w = h[i];
-        int p = s[i];
-        for(int j = k; j >= w; j--) {
-            dp[j] = max(dp[j], p + dp[j - w]);
-        }
+bool isPalindrome(int x) {
+    int orig = x, rev = 0;
+    while (x > 0) {
+        rev = rev * 10 + x % 10;
+        x /= 10;
     }
-    cout << dp[k];
-    // return ;
+    return rev == orig;
 }
+
 
 int32_t main() {
     fast;
-    solve();
+    vector<int> pals;
+    for (int i = 1; i <= 40000; ++i) {
+        if (isPalindrome(i)) pals.push_back(i);
+    }
+
+    const int MAX_SUM = 40000;
+
+     vector<int> dp(MAX_SUM + 1, 0);
+    dp[0] = 1;  
+
+    for (int x : pals) {
+        for (int sum = x; sum <= MAX_SUM; ++sum) {
+            dp[sum] = (dp[sum] + dp[sum - x]) % MOD;
+        }
+    }
+
+    int t; cin >> t;
+    while (t--) {
+        int n; cin >> n;
+        cout << dp[n] << "\n";
+    }
 }

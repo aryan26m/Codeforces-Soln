@@ -41,8 +41,8 @@ bool isPrime(int n) {
     return true;
 }
 
-// Binary Search
-bool binarySearch(const vi &a, int target) {
+// sary Search
+bool sarySearch(const vi &a, int target) {
     int low = 0, high = a.size() - 1;
     while (low <= high) {
         int mid = (low + high) / 2;
@@ -80,31 +80,37 @@ int nCr(int n, int r, int p = MOD) {
 // Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
-
 }
+
 // Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-//Solve Function
+
+// Solve Function
 void solve() {
-    int n,k;
-    cin >> n >>k;
-    vi h = inputArray(n);
-    vi s = inputArray(n);
-    vector<int> dp(k+1, 0);
-    for(int i = 0; i < n; i++) {
-        int w = h[i];
-        int p = s[i];
-        for(int j = k; j >= w; j--) {
-            dp[j] = max(dp[j], p + dp[j - w]);
-        }
+    // Write your logic here
+      int n;
+        cin >> n;
+        string s;
+        cin >> s;
+          vector<int> A(n + 1, 0);
+    for (int i = 1; i <= n; ++i) A[i] = s[i - 1] - '0';
+
+    long long ans = 0;
+    if (n == 1) {
+        ans = A[1];
+    } else {
+        ans = 2LL * (A[1] + A[n]);
+        for (int i = 2; i <= n - 1; ++i) ans += 3LL * A[i];
     }
-    cout << dp[k];
-    // return ;
+    cout << ans << '\n';
 }
 
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
+    return 0;
 }

@@ -80,31 +80,76 @@ int nCr(int n, int r, int p = MOD) {
 // Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
-
 }
+
 // Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-//Solve Function
-void solve() {
-    int n,k;
-    cin >> n >>k;
-    vi h = inputArray(n);
-    vi s = inputArray(n);
-    vector<int> dp(k+1, 0);
-    for(int i = 0; i < n; i++) {
-        int w = h[i];
-        int p = s[i];
-        for(int j = k; j >= w; j--) {
-            dp[j] = max(dp[j], p + dp[j - w]);
+
+
+
+int minCost(int n, int k) {
+    int m = v.size();
+
+    priority_queue<pair<long long,int>> pq;
+
+    vector<int> cnt(m, 0);
+    int deal = 0;
+    long long c1 = 0;
+    for (int i = 0; n > 0; i++) {
+        cnt[i] = n % 3;
+        deal += cnt[i];
+        c1 += cnt[i] * c[i];
+        n /= 3;
+    }
+
+    if (deal > k) return -1;
+
+    for (int i = 1; i < m; i++) {
+        if (cnt[i]) {
+            long long s2 = c[i] - 3 * c[i-1];
+            for (int j = 0; j < cnt[i]; j++) {
+                pq.push(make_pair(s2, i));
+            }
         }
     }
-    cout << dp[k];
-    // return ;
+
+    long long crnt = c1;
+
+    while (!pq.empty() && deal < k) {
+        auto top = pq.top(); pq.pop();
+        long long s2 = top.first;
+        int level = top.second;
+
+        if (deal + 2 > k) break;
+
+        deal += 2;   
+        crnt -= s2;
+
+        if (level > 1) {
+            long long news = c[level-1] - 3 * c[level-2];
+            for (int j = 0; j < 3; j++) {
+                pq.push(make_pair(news, level-1));
+            }
+        }
+    }
+
+    return crnt;
 }
 
 int32_t main() {
-    fast;
-    solve();
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    precompute();
+
+    int t;
+    cin >> t;
+    while (t--) {
+        int n, k;
+        cin >> n >> k;
+        cout << minCost(n, k) << "\n";
+    }
+    return 0;
 }

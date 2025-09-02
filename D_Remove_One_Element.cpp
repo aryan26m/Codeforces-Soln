@@ -80,31 +80,52 @@ int nCr(int n, int r, int p = MOD) {
 // Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
-
 }
+
 // Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-//Solve Function
+
+// Solve Function
 void solve() {
-    int n,k;
-    cin >> n >>k;
-    vi h = inputArray(n);
-    vi s = inputArray(n);
-    vector<int> dp(k+1, 0);
-    for(int i = 0; i < n; i++) {
-        int w = h[i];
-        int p = s[i];
-        for(int j = k; j >= w; j--) {
-            dp[j] = max(dp[j], p + dp[j - w]);
-        }
+       int n;
+       cin>>n;
+       vector <int> v(n+2);
+       vector <int> color(n+2);
+      rep(i,1,n+1){
+        cin>>v[i];
+      }
+      int col=0;
+      v[0]=INT_MAX;
+      v[n+1]=INT_MIN;
+             for(int i=0;i<v.size();){
+                col++;
+                color[i++]=col;
+                while(v[i]>v[i-1] && i<v.size()){
+                    color[i++]=col;
+                }
+             }
+            //  printArray(color);
+             vector <int> comp(n+5);
+             for(int i=1;i<=n;i++){
+                comp[color[i]]++;
+             }
+             int ans=*max_element(all(comp));
+             for(int i=1;i<=n;i++){
+                if(color[i-1]!=color[i+1] && v[i-1]<v[i+1]){
+
+                    // cout << comp[color[i-1]] << "  "<<comp[color[i+1]]<<  '\n';
+                    ans=max(ans,comp[color[i-1]]+comp[color[i+1]]-1);
+                }
+             }
+             cout << ans << '\n';
     }
-    cout << dp[k];
-    // return ;
-}
 
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+//  cin >> t;
+    while (t--) solve();
+    return 0;
 }

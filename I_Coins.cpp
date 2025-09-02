@@ -12,7 +12,7 @@ const int MOD = 1e9 + 7;
 const int INF = 1e18;
 
 // Input array
-vi inputArray(int n) {
+vi inp(int n) {
     vi a(n);
     for (int &x : a) cin >> x;
     return a;
@@ -80,31 +80,37 @@ int nCr(int n, int r, int p = MOD) {
 // Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
-
 }
+
 // Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-//Solve Function
-void solve() {
-    int n,k;
-    cin >> n >>k;
-    vi h = inputArray(n);
-    vi s = inputArray(n);
-    vector<int> dp(k+1, 0);
-    for(int i = 0; i < n; i++) {
-        int w = h[i];
-        int p = s[i];
-        for(int j = k; j >= w; j--) {
-            dp[j] = max(dp[j], p + dp[j - w]);
-        }
-    }
-    cout << dp[k];
-    // return ;
+const int N=3000;
+double dp[N][N];
+double v[N];
+int n;
+double f(int idx,int head) {
+     if(head>(n-head) && idx==n){
+        return 1;
+     }
+     else if(idx==n){
+        return 0;
+     }
+     if(dp[idx][head]>=0){
+        return dp[idx][head];
+     }
+     return dp[idx][head]=(1-v[idx])*f(idx+1,head)+v[idx]*f(idx+1,head+1);
 }
 
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+    // int n;
+    memset (dp,-1,sizeof(dp));
+ cin>>n;
+ for(int i=0;i<n;i++){
+    cin>>v[i];
+ }
+ cout<<setprecision(10)<<f(0,0)<<endl;
 }

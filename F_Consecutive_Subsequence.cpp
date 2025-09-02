@@ -80,31 +80,55 @@ int nCr(int n, int r, int p = MOD) {
 // Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
-
 }
+
 // Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-//Solve Function
-void solve() {
-    int n,k;
-    cin >> n >>k;
-    vi h = inputArray(n);
-    vi s = inputArray(n);
-    vector<int> dp(k+1, 0);
-    for(int i = 0; i < n; i++) {
-        int w = h[i];
-        int p = s[i];
-        for(int j = k; j >= w; j--) {
-            dp[j] = max(dp[j], p + dp[j - w]);
-        }
+ int checker(int n,int l,int h,map<int,int> &mp){
+    int ans=l;
+    while (l<=h)
+    {
+     int m=(l+h)/2;
+     int sum=0;
+     for(auto &x:mp){
+       sum+=(x.second)/m;
+     }    
+      if(sum>=n){
+        ans=m;
+        l=m+1;
+      }
+      else{
+        h=m-1;
+      }
     }
-    cout << dp[k];
-    // return ;
+    return ans;
+}
+void solve() {
+  int n,m;
+  cin>>n>>m;
+  vector<int>v(m);
+  rep(i,0,m){
+    cin>>v[i];
+  }
+  map<int,int> mp;
+  rep(i,0,m){
+    mp[v[i]]++;
+  }
+  int mini=INT_MAX;
+  int maxi=0;
+  for(auto &x : mp){
+    mini=min(mini,x.second);
+    maxi=max(maxi,x.second);
+  }
+  cout<<maxi<<endl;
+  int ans=checker(n,mini,maxi,mp);
+  cout<<ans<<endl;
 }
 
 int32_t main() {
     fast;
-    solve();
+     solve();
+    return 0;
 }

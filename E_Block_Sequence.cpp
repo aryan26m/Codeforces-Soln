@@ -80,31 +80,36 @@ int nCr(int n, int r, int p = MOD) {
 // Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
-
 }
+
 // Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-//Solve Function
+
+// Solve Function
 void solve() {
-    int n,k;
-    cin >> n >>k;
-    vi h = inputArray(n);
-    vi s = inputArray(n);
-    vector<int> dp(k+1, 0);
-    for(int i = 0; i < n; i++) {
-        int w = h[i];
-        int p = s[i];
-        for(int j = k; j >= w; j--) {
-            dp[j] = max(dp[j], p + dp[j - w]);
-        }
+    int n;
+    cin>>n;
+    vi v=inputArray(n);
+    int dp[n+1];
+    dp[n]=0;
+   dp[n-1]=1;
+   for(int i=n-2;i>=0;i--){
+    int p=dp[i+1]+1;
+    int q=1e9;
+    if(i+v[i] < n){
+        q=dp[i+v[i]+1];
     }
-    cout << dp[k];
-    // return ;
+    dp[i]=min(p,q);
+}
+cout<<dp[0]<<endl;
 }
 
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
+    return 0;
 }

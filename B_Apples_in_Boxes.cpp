@@ -80,31 +80,52 @@ int nCr(int n, int r, int p = MOD) {
 // Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
-
 }
+
 // Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-//Solve Function
+
+// Solve Function
 void solve() {
+    // Write your logic here
     int n,k;
-    cin >> n >>k;
-    vi h = inputArray(n);
-    vi s = inputArray(n);
-    vector<int> dp(k+1, 0);
-    for(int i = 0; i < n; i++) {
-        int w = h[i];
-        int p = s[i];
-        for(int j = k; j >= w; j--) {
-            dp[j] = max(dp[j], p + dp[j - w]);
+    cin>>n>>k;
+    vi v=inputArray(n);
+    int maxi=0;
+    int mini=INT_MAX;
+    int sum=0;
+    for(int i=0;i<n;i++){
+        maxi=max(maxi,v[i]);
+        mini=min(mini,v[i]);
+        sum+=v[i];
+        }
+        int cnt=0;
+        rep(i,0,n){
+            if(v[i]==maxi){
+                cnt++;
+            }
+        }
+        if((maxi-1)-mini == k && cnt>1){
+            cout<<"Jerry"<<endl;
+        }
+    else if(((maxi-1)-mini) > k ){
+        cout<<"Jerry"<<endl;
+    }
+    else{
+        if(sum%2==1){
+            cout<<"Tom"<<endl;
+        }else{
+            cout<<"Jerry"<<endl;
         }
     }
-    cout << dp[k];
-    // return ;
 }
 
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
+    return 0;
 }

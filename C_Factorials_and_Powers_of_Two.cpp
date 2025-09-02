@@ -11,7 +11,6 @@ using namespace std;
 const int MOD = 1e9 + 7;
 const int INF = 1e18;
 
-// Input array
 vi inputArray(int n) {
     vi a(n);
     for (int &x : a) cin >> x;
@@ -80,31 +79,51 @@ int nCr(int n, int r, int p = MOD) {
 // Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
-
 }
+
 // Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-//Solve Function
+int cnt(int n){
+    int ans=0;
+    while(n){
+     if(n%2)ans++;
+     n/=2;
+    }
+    return ans;
+}
+vector<int> fact(14);
+void computate(){
+    fact[0]=1;
+    for(int i=1;i<14;i++){
+        fact[i]=fact[i-1]*(i+1);
+    }
+}
 void solve() {
-    int n,k;
-    cin >> n >>k;
-    vi h = inputArray(n);
-    vi s = inputArray(n);
-    vector<int> dp(k+1, 0);
-    for(int i = 0; i < n; i++) {
-        int w = h[i];
-        int p = s[i];
-        for(int j = k; j >= w; j--) {
-            dp[j] = max(dp[j], p + dp[j - w]);
+  int n;
+  cin>>n;
+  int ans=INT_MAX;
+  for(int i=0;i<(1<<14);i++){
+    int sum=0;
+    for(int j=0;j<14;j++){
+        if(i & (1<<j)){
+            sum+=fact[j];
         }
     }
-    cout << dp[k];
-    // return ;
+    if(sum>n){break;}
+    int temp=cnt(i);
+    // cout<<temp<<endl;
+    temp+=cnt(n-sum);
+    ans=min(ans,temp);
+  }
+  cout<<ans<<endl;
 }
-
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+    computate();
+    cin >> t;
+    while (t--) solve();
+    return 0;
 }

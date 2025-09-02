@@ -12,7 +12,7 @@ const int MOD = 1e9 + 7;
 const int INF = 1e18;
 
 // Input array
-vi inputArray(int n) {
+vi inp(int n) {
     vi a(n);
     for (int &x : a) cin >> x;
     return a;
@@ -80,31 +80,57 @@ int nCr(int n, int r, int p = MOD) {
 // Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
-
 }
+
 // Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-//Solve Function
+const int N=5005;
+int dp[N][N];
+int sum[N][N];
+
+// Solve Function
 void solve() {
-    int n,k;
-    cin >> n >>k;
-    vi h = inputArray(n);
-    vi s = inputArray(n);
-    vector<int> dp(k+1, 0);
-    for(int i = 0; i < n; i++) {
-        int w = h[i];
-        int p = s[i];
-        for(int j = k; j >= w; j--) {
-            dp[j] = max(dp[j], p + dp[j - w]);
+    // Write your logic here
+ int n;
+ cin>>n;
+ vi v=inp(n);
+ for(int i=0;i<n;i++){
+    int cnt=0;
+    for(int j=i;j<n;j++)
+{
+    cnt+=v[j];
+    sum[i][j]=cnt;
+}
+ } 
+    for(int j=0;j<n;j++){
+           for(int i=0;i<n;i++){
+            dp[j][i]=1e15;
+           }
+    }
+
+    for(int i=n-1;i>=0;i--){
+        for(int j=0;j<n;j++){
+            if(i>j) {
+                continue;
+            }
+            if(i==j){
+                dp[i][j]=v[i];
+            }
+            else{
+                dp[i][j]=max(v[i]+sum[i+1][j]-dp[i+1][j],v[j]+sum[i][j-1]-dp[i][j-1]);
+            }
         }
     }
-    cout << dp[k];
-    // return ;
+    cout<<dp[0][n-1]<<endl;
+ 
+
 }
 
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+     solve();
+    return 0;
 }

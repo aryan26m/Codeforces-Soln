@@ -12,7 +12,7 @@ const int MOD = 1e9 + 7;
 const int INF = 1e18;
 
 // Input array
-vi inputArray(int n) {
+vi inp(int n) {
     vi a(n);
     for (int &x : a) cin >> x;
     return a;
@@ -80,31 +80,57 @@ int nCr(int n, int r, int p = MOD) {
 // Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
-
 }
+
 // Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-//Solve Function
-void solve() {
-    int n,k;
-    cin >> n >>k;
-    vi h = inputArray(n);
-    vi s = inputArray(n);
-    vector<int> dp(k+1, 0);
-    for(int i = 0; i < n; i++) {
-        int w = h[i];
-        int p = s[i];
-        for(int j = k; j >= w; j--) {
-            dp[j] = max(dp[j], p + dp[j - w]);
+struct Project
+{
+    long long s, e, price;
+};
+const int maxi = 2e5 + 1;
+vector<int> dp(maxi, -1);
+vector<Project> v(maxi);
+int n;
+int f(int idx) {
+    if (idx == n) {
+        return 0;
+    }
+    if (dp[idx] != -1) {
+        return dp[idx];
+    }
+    int newidx = n;
+    int start = idx + 1;
+    int end = n - 1;
+    while (start <= end) {
+        int m = (start + end) / 2;
+        if (v[m].s > v[idx].e) {
+            newidx = m;
+            end = m - 1;
+        }
+        else {
+            start = m + 1;
         }
     }
-    cout << dp[k];
-    // return ;
+    return dp[idx] = max(f(idx + 1), v[idx].price + f(newidx));
+}
+
+bool cmp(const Project &a, const Project &b) {
+    return a.s < b.s;
 }
 
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        cin >> v[i].s;
+        cin >> v[i].e;
+        cin >> v[i].price;
+    }
+    v.resize(n);
+    sort(v.begin(), v.end(), cmp);
+    cout << f(0) << endl;
 }

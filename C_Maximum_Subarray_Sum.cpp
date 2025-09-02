@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-
+#define DEBUG(x) cerr << #x << ": " << x << '\n'
 #define int long long
 #define pb push_back
 #define all(x) (x).begin(), (x).end()
@@ -80,31 +80,97 @@ int nCr(int n, int r, int p = MOD) {
 // Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
-
 }
+
 // Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-//Solve Function
+
+// Solve Function
 void solve() {
+    // Write your logic here
     int n,k;
-    cin >> n >>k;
-    vi h = inputArray(n);
-    vi s = inputArray(n);
-    vector<int> dp(k+1, 0);
-    for(int i = 0; i < n; i++) {
-        int w = h[i];
-        int p = s[i];
-        for(int j = k; j >= w; j--) {
-            dp[j] = max(dp[j], p + dp[j - w]);
+    string s;
+    cin>>n>>k>>s;
+    vi v=inputArray(n);
+    int maxi=0;
+    int sum=0;
+    for(int i=0;i<n;i++){
+             if(s[i]=='0'){
+                sum=0;
+             }
+             else{
+                sum=max(sum+v[i],v[i]);
+                maxi=max(maxi,sum);
+             }
+    }
+    if(maxi>k){
+        cout<<"No"<<endl;
+        return;
+    }
+    else if(maxi==k){
+        cout<<"Yes"<<endl;
+        for(int i=0;i<n;i++){
+            if(s[i]=='0'){
+                v[i]=-1e18;
+            }
+            cout<<v[i]<<" ";
+        }
+        cout<<endl;
+    }
+    else{
+        int first=-1;
+        for(int i=0;i<n;i++){
+            if(s[i]=='0'){
+                first=i;
+                break;
+            }
+        }
+        if(first==-1){
+            cout<<"No"<<endl;
+           return;
+        }
+        else{
+            cout<<"Yes"<<endl;
+            int presm=0;
+            int pre=0;
+            for(int i=first-1;i>=0;i--){
+                presm+=v[i];
+                pre=max(presm,pre);
+            }
+            int sfsm=0;
+            int sf=0;
+            for(int i=first+1;i<n;i++){
+                if(s[i] == '0'){
+                    break;
+                }
+                else{
+                    sfsm+=v[i];
+                    sf=max(sfsm,sf);
+                } 
+            }
+            int ans=k-pre-sf;
+            v[first]=ans;
+            for(int i=first+1;i<n;i++){
+                if(s[i]=='0'){
+                    v[i]=-1e18;
+                }
+            }
+            DEBUG(pre);
+            printArray(v);
+
         }
     }
-    cout << dp[k];
-    // return ;
+
+
+
 }
 
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
+    return 0;
 }

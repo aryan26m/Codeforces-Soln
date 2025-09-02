@@ -24,11 +24,11 @@ void printArray(const vi &a) {
     cout << '\n';
 }
 
-// GCD
-int gcd(int a, int b) {
-    if (b == 0) return a;
-    return gcd(b, a % b);
-}
+// // GCD
+// int gcd(int a, int b) {
+//     if (b == 0) return a;
+//     return gcd(b, a % b);
+// }
 
 // Prime check
 bool isPrime(int n) {
@@ -80,31 +80,22 @@ int nCr(int n, int r, int p = MOD) {
 // Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
-
 }
+
 // Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-//Solve Function
+
+// Solve Function
 void solve() {
-    int n,k;
-    cin >> n >>k;
-    vi h = inputArray(n);
-    vi s = inputArray(n);
-    vector<int> dp(k+1, 0);
-    for(int i = 0; i < n; i++) {
-        int w = h[i];
-        int p = s[i];
-        for(int j = k; j >= w; j--) {
-            dp[j] = max(dp[j], p + dp[j - w]);
-        }
-    }
-    cout << dp[k];
-    // return ;
+    // Write your logic here
 }
 
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+   int a= gcd(2,3);
+   cout<<a<<endl;
+    return 0;
 }
