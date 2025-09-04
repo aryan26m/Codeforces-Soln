@@ -152,12 +152,11 @@ void solve() {
     // Write your logic here
     int n;
     cin>>n;
-    segtree.resize(2 * n + 1);
+    segtree.resize((4 * n - 1),-1);
     vi v=enterv(n);
     build(v,0,n-1,1);
-    update(v,0,n-1,1,1,3);
-    debug(v);
-  cout<<query(0,n-1,1,4,5);
+    // update(v,0,n-1,1,1,3);
+    debug(segtree);
 }
 
 int32_t main() {

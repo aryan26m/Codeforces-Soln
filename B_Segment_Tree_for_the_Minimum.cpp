@@ -105,33 +105,59 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
+
 vector<int> segtree;
-void build(vector<int>&v,int start, int end ,int index){//build segement tree
+// void build(vector<int>&v,int start, int end ,int index){//build segement tree
+//     if(start==end){
+//         segtree[index]=v[start];
+//         return;
+//     }
+//     int mid=(start+end)/2;
+//     int left=index*2;
+//     int right=(index*2)+1;
+//     build(v,start,mid,left);
+//     build(v,mid+1,end,right);
+//     segtree[index]=min(segtree[left],segtree[right]);
+// }
+void build(vector<int> &v,int start,int end,int index){
     if(start==end){
         segtree[index]=v[start];
         return;
     }
     int mid=(start+end)/2;
-    int left=index*2;
-    int right=(index*2)+1;
+    int left=2*index;
+    int right=(2*index)+1;
     build(v,start,mid,left);
     build(v,mid+1,end,right);
-    segtree[index]=(segtree[left]+segtree[right]);
+    segtree[index]=min(segtree[left],segtree[right]);
 }
 void update(vector<int> &v,int start,int end,int index,int pos,int value){//update at a point in segment tree
+// if(start==end){
+//     v[pos]=value;
+//     segtree[index]=v[pos];
+//     return;
+// }
+// int mid=(start+end)/2;
+// if(mid>=pos){
+//     update(v,start,mid,2*index,pos,value);
+// }
+// else{
+//     update(v,mid+1,end,(2*index)+1,pos,value);
+// }
+// segtree[index]=min(segtree[2*index],segtree[(2*index)+1]);
 if(start==end){
-    v[pos]=gcd(v[pos],value);
+    v[pos]=value;
     segtree[index]=v[pos];
     return;
 }
 int mid=(start+end)/2;
 if(mid>=pos){
-    update(v,start,mid,2*index,pos,value);
+    update(v,start,mid,2*index,pos,val);
 }
 else{
-    update(v,mid+1,end,(2*index)+1,pos,value);
+    update(v,mid+1,end,(2*index)+1,pos,val);
 }
-segtree[index]=(segtree[2*index]+segtree[(2*index)+1]);
+segtree[index]=min(segtree[2*])
 }
 int query(int start,int end,int index,int l ,int r){//give sum from  l to r
     //compllete overlapp 
@@ -140,34 +166,40 @@ int query(int start,int end,int index,int l ,int r){//give sum from  l to r
         return segtree[index];
     }
     if(l>end || r<start){
-        return 0;
+        return INT_MAX;
     }
     int mid=(start+end)/2;
     int leftans=query(start,mid,2*index,l,r);
     int rightans=query(mid+1,end,(2*index)+1,l,r);
-       return (leftans^rightans);
+       return min(leftans,rightans);
 }
-// Solve Function
-void solve() {
-    // Write your logic here
+
+void solve(){
     int n,m;
     cin>>n>>m;
     segtree.resize((4 * n - 1),-1);
     vi v=enterv(n);
-
     build(v,0,n-1,1);
+    // debug(segtree);
     while (m--)
     {
-     
+     int x;
+     cin>>x;
+     if(x==1){
+        int idx,val;
+        cin>>idx>>val;
+        update(v,0,n-1,1,idx,val);
     }
-    
-    debug(segtree);
+    else{
+        int l,r;
+        cin>>l>>r;
+        cout<<query(0,n-1,1,l,r-1)<<endl;        
+    }
+    }
 }
 
 int32_t main() {
     fast;
-    int t = 1;
-    cin >> t;
-    while (t--) solve();
+   solve();
     return 0;
 }
