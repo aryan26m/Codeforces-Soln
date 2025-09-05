@@ -35,13 +35,6 @@ vi enterv(int n) {
     for (int &x : a) cin >> x;
     return a;
 }
-// Input arra
-
-// Debug print
-void printArray(const vi &a) {
-    for (int x : a) cout << x << ' ';
-    cout << '\n';
-}
 
 // GCD
 int gcd(int a, int b) {
@@ -105,98 +98,55 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-vector<vector<char>> adj;
-vector<vector<int>> vis;
-vector<vector<pair<int,int>>> par;
-vector<vector<char>> movedir;
+
+
+vector<vector<int>> adj;
+vector<bool> vis;
+
+void dfs(int node){
+    vis[node]=1;
+    for(auto v : adj[node]){
+        if(!vis[v]){
+            dfs(v);
+        } 
+    }
+}
 // Solve Function
-int n,m;
-int dx[]={1,0,-1,0};
-int dy[]={0,1,0,-1};
-char dir[] = {'D','R','U','L'};
-
-bool isvalid(int x,int y){
-      if(x>=n || y>=m || x<0 || y<0 || adj[x][y]=='#'){
-        return false;
-      }
-      return true;
-}
 void solve() {
-    // Write your logic here
-    // int n,m;
+    int n,m;
     cin>>n>>m;
-    adj.resize(n, vector<char>(m));
-    vis.resize(n, vector<int>(m,-1));
-    par.resize(n, vector<pair<int,int>>(m,{-1,-1}));    
-    movedir.resize(n, vector<char>(m));    
-    int xi=0;
-    int yi=0;
-    int fx=0;
-    int fy=0;
-    string s="";
-    for(int i=0;i<n;i++){
-        for(int j=0;j<m;j++){
-            cin>>adj[i][j];
-            if(adj[i][j]=='A'){
-                xi=i;
-                yi=j;
-            }
-            if(adj[i][j]=='B'){
-                fx=i;
-                fy=j;
-            }
+    adj.resize(n+1,vector<int>());
+    vis.resize(n,0);
+    // debug(adj);
+    for(int i=0;i<m;i++){
+        int u,v;
+        cin>>u>>v;
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
+    // debug(adj);
+    int comp=0;
+    vector<int> cmp;
+    for(int i=1;i<=n;i++){
+        if(!vis[i]){
+            cmp.pb(i);
+            comp++;
+            dfs(i);
         }
     }
-
-int ans=-1;
-    queue<pair<int,int>> q;
-    q.push({xi,yi});
-    vis[xi][yi]=0;
-    while (q.size())
-    {
-        auto a=q.front();
-        q.pop();
-        int x=a.first;
-        int y=a.second;
-        int cur=vis[x][y];
-        if(x==fx && y==fy){
-            cout<<"YES"<<endl;
-            ans=cur;
-            break;
-        }
-        for(int i=0;i<4;i++){
-           int newx=x+dx[i];  
-           int newy=y+dy[i];
-           if(isvalid(newx,newy) && vis[newx][newy]==-1){
-                q.push({newx,newy});
-                vis[newx][newy]=cur+1;
-                par[newx][newy]={x,y};
-                movedir[newx][newy]=dir[i];
-           }  
-        }
+    cout<<(comp-1)<<endl;
+    if(cmp.size()>=2){
+      for(int i=1;i<cmp.size();i++){
+        cout<<cmp[0]<<" "<<cmp[i];
+        cout<<endl;
+      }
     }
-    if(ans==-1){
-        cout<<"NO"<<endl;
-    }
-    else{
-        string s;
-
-        cout<<ans<<endl;
-        while (!(fx==xi && fy==yi))
-        {
-            s.push_back(movedir[fx][fy]);
-            auto p = par[fx][fy];
-            fx=p.first;
-            fy=p.second;
-        }
-    reverse(s.begin(),s.end());
-        cout<<s<<endl;        
-    }
+    debug(cmp);
 
 }
 
-signed main() {
+int32_t main() {
     fast;
-     solve();
+  solve();
     return 0;
 }
