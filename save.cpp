@@ -132,16 +132,21 @@ queue<state> mons;
 queue<state> aocc;
 
 vector<vector<int>> dis_pers;    // store min distances from person
+vector<vector<char>> makedir;    // store min distances from person
 vector<vector<int>> dis_mons;    // store min distances from monsters
+vector<vector<state>> par;    // store parent
 int dx[]={1,0,-1,0};
 int dy[]={0,1,0,-1};
-
+char dir[] = {'D', 'R', 'U', 'L'};
 void solve(){
      cin>>n>>m;
      adj.assign(n,vector<bool>(m));
+     string s="";
     //  bound.assign(2*(n+m));
-     dis_pers.assign(n, vector<int> (m, -1));
-     dis_mons.assign(n, vector<int> (m, -1));
+     dis_pers.assign(n, vector<int> (m, 1e9));
+     dis_mons.assign(n, vector<int> (m, 1e9));
+     par.assign(n, vector<state> (m, {-1,-1}));
+     makedir.assign(n, vector<char> (m,'0'));
      rep(i,0,n){
         rep(j,0,m){
             char ch;
@@ -156,6 +161,7 @@ void solve(){
             if(ch=='A'){
                 dis_pers[i][j]=0;
                 aocc.push({i,j});
+                par[i][j]={-1,-1};
             }
             else if(ch=='M'){
                 mons.push({i,j});
@@ -173,7 +179,7 @@ while (mons.size()){
         int xx=x+dx[i];
         int yy=y+dy[i];
         if(xx<0 || yy<0 || xx>=n || yy>=m) continue;
-        if(adj[xx][yy] && dis_mons[xx][yy]==-1){
+        if(adj[xx][yy] && dis_mons[xx][yy]==1e9){
             dis_mons[xx][yy]=dis_mons[x][y]+1;
           mons.push({xx,yy});
         }
@@ -189,24 +195,37 @@ while (aocc.size()){
         int xx=x+dx[i];
         int yy=y+dy[i];
         if(xx<0 || yy<0 || xx>=n || yy>=m) continue;
-        if(adj[xx][yy] && dis_pers[xx][yy]==-1){
+        if(adj[xx][yy] && dis_pers[xx][yy]==1e9){
             dis_pers[xx][yy]=dis_pers[x][y]+1;
           aocc.push({xx,yy});
+          par[xx][yy]={x,y};
+          makedir[xx][yy]=dir[i];
         }
     }
 }
 
 for(auto cell:bound) {
-    // debug(cell.first);
     if(dis_pers[cell.F][cell.S] < dis_mons[cell.F][cell.S]) {
        cout<<"YES"<<endl;
-       debug(cell.F);
-       debug(cell.S);
-       cout << dis_pers[cell.F][cell.S] << '\\n';
+       cout << dis_pers[cell.F][cell.S] << endl;
+       int x=cell.F;
+       int y=cell.S;
+       while (!(x==-1 && y==-1)  && makedir[x][y]!='0')
+       {
+        s.pb(makedir[x][y]);
+        auto p = par[x][y];
+        x=p.F;
+        y=p.S;
+    }
+    reverse(s.begin(),s.end());
+    cout<<s<<endl; 
         return;
     }
 }
-cout << "NO\\n";
+
+
+
+cout << "NO"<<endl;
 
 }
 
