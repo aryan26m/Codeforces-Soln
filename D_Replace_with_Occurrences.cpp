@@ -150,6 +150,7 @@ void solve() {
         }
 
         for (int i = 0; i < index.size(); i += k) {
+          
             cnt++;
             for (int j = 0; j < k; ++j) {
                 res[index[i + j]] = cnt;

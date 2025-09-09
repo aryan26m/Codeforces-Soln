@@ -121,42 +121,45 @@ void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
 
-// Solve Function
 void solve() {
-    // Write your logic here
-    int n;
-    cin>>n;
-    vector<vector<int>> adj(n+1,vector<int>(n+1,1e18));
-    for(int i=1;i<=n;i++){
-        for(int j=1;j<=n;j++){
-            cin>>adj[i][j];
+    long long k, x;
+    cin >> k >> x;
+
+    long long S = 1LL << (k + 1); 
+    long long a = x, b = S - x;
+
+    vector<int> ans;
+    while (a != b) {
+        if (a < b) {
+            ans.push_back(1);
+            b -= a;
+            a <<= 1;
+            debug(a);
+        }
+         else {
+            ans.push_back(2);
+            a -= b;
+            b <<= 1;
         }
     }
 
-    vi v=enterv(n);
-    reverse(v.begin(),v.end());
-    vector<int>ans;
-    for(int k=0;k<n;k++){
-        int x=v[k];
-        for(int i=1;i<=n;i++){
-            for(int j=1;j<=n;j++){
-                adj[i][j]=min(adj[i][j],adj[i][x]+adj[x][j]);
-            }
+    reverse(ans.begin(), ans.end());
+    cout << ans.size() << '\n'; 
+
+       for (int i = 0; i < ans.size(); ++i) {
+        cout << ans[i] << " ";
+        if(i+1==ans.size()){
+            cout<<endl;
         }
-        int sum=0;
-        for(int i=0;i<=k;i++){
-            for(int j=0;j<=k;j++){
-             sum+=adj[v[i]][v[j]];  
-            }
-        }
-        ans.pb(sum);
     }
-    reverse(ans.begin(),ans.end());
-    // debug(adj);
-    printArray(ans);
+    
+    if (ans.empty()) cout << '\n';
 }
-signed main() {
+
+int32_t main() {
     fast;
- solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
     return 0;
 }

@@ -120,43 +120,41 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-
-// Solve Function
 void solve() {
-    // Write your logic here
-    int n;
-    cin>>n;
-    vector<vector<int>> adj(n+1,vector<int>(n+1,1e18));
-    for(int i=1;i<=n;i++){
-        for(int j=1;j<=n;j++){
-            cin>>adj[i][j];
-        }
-    }
+    long long x, floorr, ceill;
+    cin >> x >> floorr >> ceill;
 
-    vi v=enterv(n);
-    reverse(v.begin(),v.end());
-    vector<int>ans;
-    for(int k=0;k<n;k++){
-        int x=v[k];
-        for(int i=1;i<=n;i++){
-            for(int j=1;j<=n;j++){
-                adj[i][j]=min(adj[i][j],adj[i][x]+adj[x][j]);
-            }
+    auto F = [&](long long x, long long n) {
+        while (n--) {
+            if (!x) return 0LL;
+            x >>= 1;
         }
-        int sum=0;
-        for(int i=0;i<=k;i++){
-            for(int j=0;j<=k;j++){
-             sum+=adj[v[i]][v[j]];  
-            }
+        return x;
+    };
+
+    auto C = [&](long long x, long long n) {
+        while (n--) {
+            if (x <= 1) return x;
+            x = (x + 1) >> 1;
         }
-        ans.pb(sum);
-    }
-    reverse(ans.begin(),ans.end());
-    // debug(adj);
-    printArray(ans);
+        return x;
+    };
+
+    long long case1 = C(F(x, floorr), ceill); 
+    long long case2 = F(C(x, ceill), floorr); 
+
+    long long mini = min(case1, case2);
+    long long maxi = max(case1, case2);
+
+    cout << mini << " " << maxi << "\n";
 }
-signed main() {
+
+
+
+int32_t main() {
     fast;
- solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
     return 0;
 }

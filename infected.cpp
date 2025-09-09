@@ -120,43 +120,71 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-
+vector<vector<int>> adj;
+vector<vector<int>> dis;
+vector<vector<bool>> vis;
+int dx[]={0,1,-1,0};
+int dy[]={1,0,0,-1};
 // Solve Function
 void solve() {
     // Write your logic here
-    int n;
-    cin>>n;
-    vector<vector<int>> adj(n+1,vector<int>(n+1,1e18));
-    for(int i=1;i<=n;i++){
-        for(int j=1;j<=n;j++){
+    int n,m;
+    cin>>n>>m;
+    adj.resize(n,vector<int>(m));
+    dis.assign(n,vector<int>(m,INF));
+    vis.assign(n,vector<bool>(m,0));
+    queue<pair<int,int>> q;
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++){
             cin>>adj[i][j];
+            if(adj[i][j]==2){
+                q.push({i,j});
+                dis[i][j]=0;
+                vis[i][j] = 1;
+            }
         }
     }
 
-    vi v=enterv(n);
-    reverse(v.begin(),v.end());
-    vector<int>ans;
-    for(int k=0;k<n;k++){
-        int x=v[k];
-        for(int i=1;i<=n;i++){
-            for(int j=1;j<=n;j++){
-                adj[i][j]=min(adj[i][j],adj[i][x]+adj[x][j]);
+    while (q.size())
+    {
+        auto p = q.front();
+        q.pop();
+        int x1=p.first;
+        int x2=p.second;
+        int disnode=dis[x1][x2];
+        vis[x1][x2]=1;
+        for(int i=0;i<4;i++){
+            int xx=x1+dx[i];
+            int yy=x2+dy[i];
+            if(xx<0 || yy<0 || xx>=n || yy>=m) continue;
+            if(vis[xx][yy]==0 && adj[xx][yy]==1){
+              vis[xx][yy] = 1;   
+    dis[xx][yy] = disnode + 1;  
+    q.push({xx, yy});
+
             }
         }
-        int sum=0;
-        for(int i=0;i<=k;i++){
-            for(int j=0;j<=k;j++){
-             sum+=adj[v[i]][v[j]];  
-            }
-        }
-        ans.pb(sum);
     }
-    reverse(ans.begin(),ans.end());
-    // debug(adj);
-    printArray(ans);
+    int ans=0;
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++){
+            if(adj[i][j]==1 && dis[i][j]==INF){
+                cout<<-1<<endl;
+                return;
+            }
+            if(adj[i][j]==1){
+              ans=max(ans,dis[i][j]);
+            }
+
+        }
+    }
+    cout<<ans<<endl;
+    
+    // debug(dis);
 }
-signed main() {
+
+int32_t main() {
     fast;
- solve();
+     solve();
     return 0;
 }

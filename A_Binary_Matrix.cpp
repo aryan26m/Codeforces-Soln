@@ -124,39 +124,35 @@ void push(map<int, int> &mp, int k, int v) {
 // Solve Function
 void solve() {
     // Write your logic here
-    int n;
-    cin>>n;
-    vector<vector<int>> adj(n+1,vector<int>(n+1,1e18));
-    for(int i=1;i<=n;i++){
-        for(int j=1;j<=n;j++){
-            cin>>adj[i][j];
-        }
-    }
-
-    vi v=enterv(n);
-    reverse(v.begin(),v.end());
-    vector<int>ans;
-    for(int k=0;k<n;k++){
-        int x=v[k];
-        for(int i=1;i<=n;i++){
-            for(int j=1;j<=n;j++){
-                adj[i][j]=min(adj[i][j],adj[i][x]+adj[x][j]);
+    int n,m;
+    cin>>n>>m;
+    int r=0;
+    int c=0;
+    vector<vector<int>> a(n,vector<int>(m));
+     for (int i = 0;i < n;i += 1){
+			for (int j = 0;j < m;j += 1){
+                char ch;
+                cin>>ch;
+                 a[i][j] = ch - '0';
             }
-        }
-        int sum=0;
-        for(int i=0;i<=k;i++){
-            for(int j=0;j<=k;j++){
-             sum+=adj[v[i]][v[j]];  
-            }
-        }
-        ans.pb(sum);
+	}
+    for (int i = 0;i < n;i += 1){
+			bool sum = 0;
+			for (int j = 0;j < m;j += 1) sum ^= a[i][j];
+			if (sum) r += 1;
+	}
+    for (int j = 0;j < m;j += 1){
+			bool sum = 0;
+			for (int i = 0;i < n;i += 1) sum ^= a[i][j];
+			if (sum) c += 1;
     }
-    reverse(ans.begin(),ans.end());
-    // debug(adj);
-    printArray(ans);
+        cout<<max(r,c)<<endl;
 }
-signed main() {
+
+int32_t main() {
     fast;
- solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
     return 0;
 }
