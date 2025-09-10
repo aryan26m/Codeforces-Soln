@@ -120,69 +120,52 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
+int n,m;
 vector<vector<int>> adj;
-vector<vector<int>> dis;
-vector<vector<bool>> vis;
-int dx[]={0,1,-1,0};
-int dy[]={1,0,0,-1};
-void solve() {
-    // Write your logic here
-    int n,m;
-    cin>>n>>m;
-    adj.resize(n,vector<int>(m));
-    dis.assign(n,vector<int>(m,INF));
-    vis.assign(n,vector<bool>(m,0));
-    queue<pair<int,int>> q;
-    for(int i=0;i<n;i++){
-        for(int j=0;j<m;j++){
-            cin>>adj[i][j];
-            if(adj[i][j]==2){
-                q.push({i,j});
-                dis[i][j]=0;
-                vis[i][j] = 1;
-            }
+vector<int> ans;
+vector<int> indeg;
+void topo(int node){
+    priority_queue<int> q;
+    for(int i=1;i<=n;i++){
+        if(indeg[i]==0){
+            q.push(-i);
         }
     }
-
     while (q.size())
     {
-        auto p = q.front();
+        int curr=-q.top();
         q.pop();
-        int x1=p.first;
-        int x2=p.second;
-        int disnode=dis[x1][x2];
-        vis[x1][x2]=1;
-        for(int i=0;i<4;i++){
-            int xx=x1+dx[i];
-            int yy=x2+dy[i];
-            if(xx<0 || yy<0 || xx>=n || yy>=m) continue;
-            if(vis[xx][yy]==0 && adj[xx][yy]==1){
-              vis[xx][yy] = 1;   
-    dis[xx][yy] = disnode + 1;  
-    q.push({xx, yy});
-            }
+        ans.pb(curr);
+        for(int x : adj[curr]){
+              indeg[x]--;
+              if(indeg[x]==0){
+                q.push(-x);
+              }
         }
     }
-    int ans=0;
-    for(int i=0;i<n;i++){
-        for(int j=0;j<m;j++){
-            if(adj[i][j]==1 && dis[i][j]==INF){
-                cout<<-1<<endl;
-                return;
-            }
-            if(adj[i][j]==1){
-              ans=max(ans,dis[i][j]);
-            }
-
-        }
+}
+// Solve Function
+void solve() {
+    // Write your logic here
+    cin>>n>>m;
+   adj.resize(n+1,vector<int>());
+   indeg.assign(n+1,0);
+    for(int i=0;i<m;i++){
+        int x,y;
+        cin>>x>>y;
+        adj[x].pb(y);
+        indeg[y]++;
     }
-    cout<<ans<<endl;
-    
-    // debug(dis);
+    topo(n);
+    if(ans.size()!=n){
+        cout<<-1<<endl;
+        return;
+    }
+    printArray(ans); 
 }
 
 int32_t main() {
     fast;
-     solve();
+   solve();
     return 0;
 }

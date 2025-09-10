@@ -99,90 +99,50 @@ int power(int x, int y, int p) {
     return res;
 }
 
-int modInverse(int n, int p) {
-    return power(n, p - 2, p);
-}
-
-int nCr(int n, int r, int p = MOD) {
-    if (r > n || r < 0) return 0;
-    static vector<int> fact(1, 1);
-    while ((int)fact.size() <= n)
-        fact.push_back(fact.back() * fact.size() % p);
-    return fact[n] * modInverse(fact[r], p) % p * modInverse(fact[n - r], p) % p;
-}
-
-// Comparator (Descending Order)
-bool comp(int a, int b) {
-    return a > b;
-}
-
-// Frequency Map Update
-void push(map<int, int> &mp, int k, int v) {
-    mp[k] += v;
-}
+int n,m;
 vector<vector<int>> adj;
-vector<vector<int>> dis;
-vector<vector<bool>> vis;
-int dx[]={0,1,-1,0};
-int dy[]={1,0,0,-1};
-void solve() {
-    // Write your logic here
-    int n,m;
-    cin>>n>>m;
-    adj.resize(n,vector<int>(m));
-    dis.assign(n,vector<int>(m,INF));
-    vis.assign(n,vector<bool>(m,0));
-    queue<pair<int,int>> q;
-    for(int i=0;i<n;i++){
-        for(int j=0;j<m;j++){
-            cin>>adj[i][j];
-            if(adj[i][j]==2){
-                q.push({i,j});
-                dis[i][j]=0;
-                vis[i][j] = 1;
-            }
-        }
-    }
-
+vector<int> dp;
+vector<int> indeg;
+void topo(int n){
+queue<int> q;
+for(int i=1;i<=n;i++){
+if(indeg[i]==0){
+    q.push(i);
+}
+}
+dp[1]=1;
     while (q.size())
     {
-        auto p = q.front();
+        int cur=q.front();
         q.pop();
-        int x1=p.first;
-        int x2=p.second;
-        int disnode=dis[x1][x2];
-        vis[x1][x2]=1;
-        for(int i=0;i<4;i++){
-            int xx=x1+dx[i];
-            int yy=x2+dy[i];
-            if(xx<0 || yy<0 || xx>=n || yy>=m) continue;
-            if(vis[xx][yy]==0 && adj[xx][yy]==1){
-              vis[xx][yy] = 1;   
-    dis[xx][yy] = disnode + 1;  
-    q.push({xx, yy});
+        for(int x : adj[cur]){
+            dp[x]=(dp[x]+dp[cur])%MOD;
+            indeg[x]--;
+            if(indeg[x]==0){
+                q.push(x);
             }
         }
     }
-    int ans=0;
-    for(int i=0;i<n;i++){
-        for(int j=0;j<m;j++){
-            if(adj[i][j]==1 && dis[i][j]==INF){
-                cout<<-1<<endl;
-                return;
-            }
-            if(adj[i][j]==1){
-              ans=max(ans,dis[i][j]);
-            }
-
-        }
+}
+// Solve Function
+void solve() {
+    // Write your logic here
+    cin>>n>>m;
+    adj.resize(n+1,vector<int>());
+    dp.resize(n+1);
+    indeg.resize(n+1);
+    for(int i=0;i<m;i++){
+        int x,y;
+        cin>>x>>y;
+        adj[x].pb(y);
+        indeg[y]++;
     }
-    cout<<ans<<endl;
-    
-    // debug(dis);
+    topo(n);
+    cout<<dp[n]<<endl;
 }
 
 int32_t main() {
     fast;
-     solve();
+    solve();
     return 0;
 }

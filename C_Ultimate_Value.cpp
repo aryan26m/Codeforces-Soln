@@ -116,73 +116,83 @@ bool comp(int a, int b) {
     return a > b;
 }
 
-// Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-vector<vector<int>> adj;
-vector<vector<int>> dis;
-vector<vector<bool>> vis;
-int dx[]={0,1,-1,0};
-int dy[]={1,0,0,-1};
-void solve() {
-    // Write your logic here
-    int n,m;
-    cin>>n>>m;
-    adj.resize(n,vector<int>(m));
-    dis.assign(n,vector<int>(m,INF));
-    vis.assign(n,vector<bool>(m,0));
-    queue<pair<int,int>> q;
-    for(int i=0;i<n;i++){
-        for(int j=0;j<m;j++){
-            cin>>adj[i][j];
-            if(adj[i][j]==2){
-                q.push({i,j});
-                dis[i][j]=0;
-                vis[i][j] = 1;
+
+long long altSum(const vector<long long>& a) {
+    long long sum = 0;
+    for (size_t i = 0; i < a.size(); i++) {
+        if (i % 2 == 0) sum += a[i];
+        else sum -= a[i];
+    }
+    return sum;
+}
+void solve(){
+    int n;
+    cin >> n;
+    vector<long long> a(n);
+    for (int i = 0; i < n; i++) cin >> a[i];
+
+    long long base = altSum(a);
+
+    long long bst = 0; 
+    int l = -1, r = -1;
+
+    long long bestEvenVal = LLONG_MIN; 
+     int bestEvenIdx = -1;
+    long long bestOddVal = LLONG_MIN; 
+        int bestOddIdx = -1;
+
+    for (int j = 0; j < n; ++j) {
+        if (j % 2 == 0) {
+            if (bestOddIdx != -1) {
+                long long gain = (2 * a[bestOddIdx] - bestOddIdx) + (-2 * a[j] + j);
+                if (gain > bst) {
+                    bst = gain;
+                    l = bestOddIdx;
+                    r = j;
+                }
+            }
+            long long cand = -2 * a[j] - j;
+            if (cand > bestEvenVal) {
+                bestEvenVal = cand;
+                bestEvenIdx = j;
+            }
+        } else { 
+            if (bestEvenIdx != -1) {
+                long long gain = (2 * a[j] + j) + (-2 * a[bestEvenIdx] - bestEvenIdx);
+                if (gain > bst) {
+                    bst = gain;
+                    l = bestEvenIdx;
+                    r = j;
+                }
+            }
+            long long cand = 2 * a[j] - j;
+            if (cand > bestOddVal) {
+                bestOddVal = cand;
+                bestOddIdx = j;
             }
         }
     }
 
-    while (q.size())
-    {
-        auto p = q.front();
-        q.pop();
-        int x1=p.first;
-        int x2=p.second;
-        int disnode=dis[x1][x2];
-        vis[x1][x2]=1;
-        for(int i=0;i<4;i++){
-            int xx=x1+dx[i];
-            int yy=x2+dy[i];
-            if(xx<0 || yy<0 || xx>=n || yy>=m) continue;
-            if(vis[xx][yy]==0 && adj[xx][yy]==1){
-              vis[xx][yy] = 1;   
-    dis[xx][yy] = disnode + 1;  
-    q.push({xx, yy});
-            }
-        }
+    long long result = base;
+    if (bst > 0 && l != -1) {
+        swap(a[l], a[r]);
+        long long cost = (r - l);
+        result = altSum(a) + cost;
     }
-    int ans=0;
-    for(int i=0;i<n;i++){
-        for(int j=0;j<m;j++){
-            if(adj[i][j]==1 && dis[i][j]==INF){
-                cout<<-1<<endl;
-                return;
-            }
-            if(adj[i][j]==1){
-              ans=max(ans,dis[i][j]);
-            }
 
-        }
+    cout << result << "\n";
+}
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+    while (t--) {
+solve();
     }
-    cout<<ans<<endl;
-    
-    // debug(dis);
 }
 
-int32_t main() {
-    fast;
-     solve();
-    return 0;
-}
