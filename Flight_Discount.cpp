@@ -120,110 +120,12 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-#define F first
-#define S second
-int n,m;
-vector<vector<pair<int,int>>> adj;
-vector<vector<int>> rev;
-// vector<bool> cmp;
-// vector<bool> cmp2;
-vector<bool> vis;
-vector<bool> vis2;
-vector<int> dis;
-void dfs(int node){
-    if(node==n){
-        vis[node]=true;
-        return;
-    }
-    vis[node]=1;
-    for(auto x : adj[node]){
-        if(vis[x.F]==0){
-            dfs(x.F);
-        }
-    }
-}
 
-void dfs2(int node){
-    // debug(node);
-    if(node==1){
-        vis2[1]=true;
-        return;
-    }
-    vis2[node]=true;
-    for(auto x : rev[node]){
-        if(vis2[x]==0){
-            dfs2(x);
-        }
-    }
-}
-
-
+// Solve Function
 void solve() {
-    cin>>n>>m;
-    adj.resize(n+3);
-    rev.resize(n+3);
-    vis.assign(n+3,0);
-    vis2.assign(n+3,0);
-    dis.assign(n+3,1e18);
-    for(int i=0;i<m;i++){
-        int u,v,w;
-        cin>>u>>v>>w;
-        adj[u].pb({v,-w});
-        rev[v].pb(u);
-    }
-    int sum=0;
-    if (n == 1) {
-        for(auto x : adj[1]){
-            if(x.S==-1){
-         cout<<-1<<endl;
-            return;
-        }
-    }
-    cout<<0<<endl;
-return;
-    }
-    dis[1]=0;
-    vector<int> pr;
-    for(int i=1;i<=n+2;i++){
-        for(int i=1;i<=n;i++){
-            //x1(i)----->x2 with weight w
-            for(auto &node : adj[i]){
-                int x2=node.F;
-                int w=node.S;
-                if(dis[x2]>dis[i]+w){
-                    dis[x2]=dis[i]+w;
-                }
-            }
-        }
-        if(i==n-1){
-            pr=dis;
-        }
-    }
-    set<int> st;
-    
-    for(int i=1;i<=n;i++){
-        if(dis[i]!=pr[i]){
-            st.insert(i);
-        }
-    }
-    
-    dfs(1);
-    dfs2(n);
-    debug(vis);
-   
-   bool check=false;
-    for(auto x : st){
-        if((vis[x] && vis2[x]) && vis[n]==true){
-            check=true;
-        }
-    }
-    if(check){
-        cout<<-1<<endl;
-    }
-    else{
-        cout<<(-1*dis[n])<<endl;
-    }
+     
 }
+
 int32_t main() {
     fast;
     solve();
