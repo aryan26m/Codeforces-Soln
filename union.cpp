@@ -120,31 +120,66 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-#define MP make_pair
-#define S second
-#define F first
-using state = pair<int,int>;
-vector<vector<pair<int,state>>> adj;
-int n,m;
 
-// Solve Function
-void solve() {
-    // Write your logic here
-    cin>>n>>m;
-    adj.resize(n+1);
-    for(int i=0;i<m;i++){
-        int a,b;
-        cin>>a>>b;
-        int p,d;
-        cin>>p>>d;
-        adj[a].pb(MP(b,MP(p,d)));
-        adj[b].pb(MP(a,MP(p,d)));
+// vector<vector<pair<int,int>>> adj;
+vector<int> rankk;
+vector<int> parent;
+int find(int node){
+    if(parent[node]==node){
+        return node;
+    }
+    return parent[node]=find(parent[node]);
+}
+void unitee(int x,int y)
+{
+    int parx=find(x);
+    int pary=find(y);
+    if(parx==pary){
+        return;
+    }
+    if(rankk[parx]>rankk[pary]){
+        parent[pary]=parx;
+    }
+    else if(rankk[parx]<rankk[pary]){
+        parent[parx]=pary;
+    }
+    else{
+        parent[parx]=pary;
+        rankk[pary]+=1;
     }
 }
+// Solve Function
+void solve() {
+    int n,m;
+    // Write your logic here
+     cin>>n>>m;
+     rankk.assign(n+1,0);
+     parent.resize(n+1);
+     for(int i=1;i<=n;i++){
+         parent[i]=i;
+        }
+      for(int i=0;i<m;i++){
+        int com,x,y;
+        cin>>com>>x>>y;
+        if(com==0){
+            unitee(x,y);
+        }
+        else{
+            int x1=find(x); 
+            int y1=find(y);
+            if(x1==y1){
+                cout<<1<<endl;
+            } else{
+                cout<<0<<endl;
+            }
+        }
+        // debug(parent);
+      }
+      
+    }
+
 int32_t main() {
     fast;
-    int t = 1;
-    cin >> t;
-    while (t--) solve();
+    solve();
     return 0;
 }

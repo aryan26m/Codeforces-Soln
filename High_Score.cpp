@@ -120,31 +120,103 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-#define MP make_pair
-#define S second
 #define F first
-using state = pair<int,int>;
-vector<vector<pair<int,state>>> adj;
+#define S second
 int n,m;
+vector<vector<pair<int,int>>> adj;
+vector<vector<int>> rev;
+// vector<bool> cmp;
+// vector<bool> cmp2;
+vector<bool> vis;
+vector<bool> vis2;
+vector<int> dis;
+void dfs(int node){
+    if(node==n){
+        vis[node]=true;
+        return;
+    }
+    vis[node]=1;
+    for(auto x : adj[node]){
+        if(vis[x.F]==0){
+            dfs(x.F);
+        }
+    }
+}
 
-// Solve Function
+void dfs2(int node){
+    if(node==1){
+        vis[1]=true;
+        return;
+    }
+    vis2[node]=1;
+    for(auto x : adj[node]){
+        if(vis2[x.F]==0){
+            dfs(x.F);
+        }
+    }
+}
+
+
 void solve() {
-    // Write your logic here
     cin>>n>>m;
     adj.resize(n+1);
+    rev.resize(n+1);
+    vis.assign(n+1,0);
+    vis2.assign(n+1,0);
+    dis.assign(n+1,1e18);
     for(int i=0;i<m;i++){
-        int a,b;
-        cin>>a>>b;
-        int p,d;
-        cin>>p>>d;
-        adj[a].pb(MP(b,MP(p,d)));
-        adj[b].pb(MP(a,MP(p,d)));
+        int u,v,w;
+        cin>>u>>v>>w;
+        adj[u].pb({v,-w});
+        rev[v].pb(u);
+    }
+    // debug(adj);
+
+    dis[1]=0;
+    vector<int> pr;
+    for(int i=1;i<=n+2;i++){
+       for(int i=1;i<=n;i++){
+             //x1(i)----->x2 with weight w
+             for(auto &node : adj[i]){
+                int x2=node.F;
+                int w=node.S;
+                if(dis[x2]>dis[i]+w){
+                    dis[x2]=dis[i]+w;
+                }
+             }
+       }
+        if(i==n-1){
+        pr=dis;
+       }
+    }
+    set<int> st;
+
+    for(int i=1;i<=n;i++){
+        if(dis[i]!=pr[i]){
+        st.insert(i);
+        }
+    }
+
+    dfs(1);
+    dfs2(n);
+//    debug(st);
+   debug(vis);
+//    debug(vis2);
+   bool check=false;
+    for(auto x : st){
+        if((vis[x] && vis2[x]) && vis[n]==true){
+            check=true;
+        }
+    }
+    if(check){
+        cout<<-1<<endl;
+    }
+    else{
+        cout<<(-1*dis[n])<<endl;
     }
 }
 int32_t main() {
     fast;
-    int t = 1;
-    cin >> t;
-    while (t--) solve();
+    solve();
     return 0;
 }
