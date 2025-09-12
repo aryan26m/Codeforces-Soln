@@ -120,10 +120,71 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
+#define F first
+#define S second
+vector<vector<pair<int,int>>> adj1;
+vector<vector<pair<int,int>>> adj2;
 
-// Solve Function
+int n,m;
+vector<bool> vis;
+int ans=1e18;
+int sum=0;
+void dijksta(vector<vector<pair<int,int>>>&adj,int nn,vector<int> &dis){
+    priority_queue <pair<int,int>> q;
+    int maxi=0;
+    q.push({0,nn});
+    dis[nn]=0;
+    while (q.size()){
+       auto p = q.top();
+       q.pop();
+       int w=p.F;
+       int node=p.S;
+       if(vis[node]) continue;
+       vis[node]=1;
+       for(auto x : adj[node]){
+           if(dis[x.F]>dis[node]+x.S){
+               dis[x.F]=dis[node]+x.S;
+               q.push({-dis[x.F],x.F});      
+        }
+    }
+    }
+}
 void solve() {
-     
+     cin>>n>>m;
+     adj1.resize(n+1);
+     adj2.resize(n+1);
+     vector<int> dis1;
+     dis1.assign(n+1,1e18);
+     vector<int> dis2;
+     dis2.assign(n+1,1e18);
+     vis.assign(n+1,0);
+     for(int i=0;i<m;i++){
+        int u,v,w;
+        cin>>u>>v>>w;
+        adj1[u].pb({v,w});
+        adj2[v].pb({u,w});
+     }
+        dijksta(adj1,1,dis1);
+        vis.clear();
+        vis.assign(n+1,0);
+        dijksta(adj2,n,dis2);
+        int ans=LLONG_MAX;
+        for(int i=1;i<=n;i++){
+              for(auto g : adj1[i]){  
+                        int sum=dis1[i]+((g.S)/2)+dis2[g.F];
+                        ans=min(ans,sum);
+                }
+            }
+
+            // debug(dis1);
+            // debug(dis2);
+            if(ans==LLONG_MAX){
+                cout<<0<<endl;
+            }
+            else{
+                
+                cout<<ans<<endl;
+            }
 }
 
 int32_t main() {
