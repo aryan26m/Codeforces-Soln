@@ -121,75 +121,51 @@ void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
 int n,m;
+vector<int> ind;
 vector<vector<int>> adj;
-vector<int> parent;
-vector<int> col;
-vector<int> indeg;
-int cycle_start = -1;
-int cycle_end = -1;
-void dfs(int node){
-    col[node] = 1; // 0 = unvisited, 1 = visiting, 2 = visited
-    for (int x : adj[node]) {
-        if (col[x] == 0) {
-            parent[x] = node;
-            dfs(x);
-            if (cycle_start != -1) return; // stop if cycle already found
-        } else if (col[x] == 1) {
-            // back edge found: x is start of cycle, node is end
-            cycle_start = x;
-            cycle_end = node;
-            return;
+vector<int> ans;
+void topo(){
+    queue<int> q;
+    for(int i=1;i<=n;i++){
+        if(ind[i]==0){
+            q.push(i);
         }
     }
-    col[node] = 2;
+    while (q.size()>0)
+    {
+        int node=q.front();
+        q.pop();
+        ans.pb(node);
+        for(int x:adj[node]){
+            ind[x]--;
+            if(ind[x]==0){
+                q.push(x);
+            }
+        }
+    }
 }
-// Solve Function
 void solve() {
-    // reset cycle markers for each test case
-    cycle_start = -1;
-    cycle_end = -1;
+    cin>>n>>m;
+    adj.resize(n+1);
+    ind.resize(n+1);
+for(int i=0;i<m;i++){
+    int x,y;
+    cin>>x>>y;
+    adj[x].pb(y);
+    ind[y]++;
+}
+topo();
+if(ans.size()==n){
+    printArray(ans);
+}
+else{
+    cout<<"IMPOSSIBLE"<<endl;
+}
 
-    cin >> n >> m;
-    adj.assign(n+1, {});
-    parent.assign(n+1, -1);
-    col.assign(n+1, 0); // 0 = unvisited
-
-    for (int i = 0; i < m; i++) {
-        int x, y;
-        cin >> x >> y;
-        adj[x].pb(y);
-    }
-
-    // Run DFS from every node to find a cycle anywhere in the graph
-    for (int i = 1; i <= n; ++i) {
-        if (col[i] == 0) {
-            dfs(i);
-            if (cycle_start != -1) break;
-        }
-    }
-
-    if (cycle_start == -1) {
-        cout << "IMPOSSIBLE\n";
-        return;
-    } else {
-        cout << "YES\n";
-        // reconstruct cycle path
-        vector<int> cycle;
-        cycle.push_back(cycle_start);
-        for (int v = cycle_end; v != cycle_start; v = parent[v])
-            cycle.push_back(v);
-        cycle.push_back(cycle_start);
-        reverse(cycle.begin(), cycle.end());
-        cout << cycle.size() << '\n';
-        for (int v : cycle) cout << v << ' ';
-        cout << '\n';
-    }
 }
 
 int32_t main() {
     fast;
-    int T = 1;
-    if (!(cin >> T)) return 0;
-    while (T--) solve();
+   solve();
     return 0;
 }
