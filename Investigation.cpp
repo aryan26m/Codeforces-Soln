@@ -120,43 +120,57 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-
+#define F first
+#define S second
 // Solve Function
 void solve() {
     // Write your logic here
     int n,m;
     cin>>n>>m;
-    vector<vector<int>> adj(n+1);
-    for(int i=0;i<m;i++){
-          int u,v;
-          cin>>u>>v;
-          adj[u].pb(v);
-    }
+    vector<vector<pair<int,int>>> adj(n+1);
+    vector<int> dis(n+1,1e18);
+    vector<int> vis(n+1,0);
+    vector<pair<int,int>> path(n+1,{0,0});//pair max,min
     vector<int> dp(n + 1, 0);
+
     dp[1] = 1;
-    vector<int> indegree(n + 1, 0);
-    for (int u = 1; u <= n; ++u) {
-        for (int v : adj[u]) {
-            indegree[v]++;
+    
+    for(int i=0;i<m;i++){
+        int u,v,w;
+        cin>>u>>v>>w;
+        adj[u].pb({v,w});
+    }
+    priority_queue<pair<int,int>> pq;
+    pq.push({0,1});
+    dis[1]=0;
+    path[1]={1,1};
+    while (pq.size()){
+      auto p = pq.top();
+      pq.pop();
+      int node=p.S;
+      if(vis[node]) continue;
+      vis[node]=1;
+      for(auto neg : adj[node]){
+            if(dis[neg.F] > dis[node]+neg.S){
+                dis[neg.F]=dis[node]+neg.S;
+                pq.push({-dis[neg.F],neg.F});
+                // if(dp[neg.F] == 0){
+                    dp[neg.F]=(dp[node])%MOD;
+                // }
+                    path[neg.F]={path[node].F+1,path[node].S+1};
+                }
+                else if(dis[neg.F] == dis[node]+neg.S){
+                  path[neg.F].S = max(path[neg.F].S, path[node].S + 1);
+                  path[neg.F].F = min(path[neg.F].F, path[node].F + 1);
+                   dp[neg.F]=(dp[neg.F]+dp[node])%MOD;
+            }
         }
     }
-    queue<int> q;
-    for (int i = 1; i <= n; ++i) {
-        if (indegree[i] == 0) q.push(i);
-    }
-    while (!q.empty()) {
-        int u = q.front(); q.pop();
-        for (int v : adj[u]) {
-            dp[v] = (dp[v] + dp[u]) % MOD;
-            indegree[v]--;
-            if (indegree[v] == 0) q.push(v);
-        }
-    }
-    cout<<dp[n]%MOD<<endl;
+    cout<<dis[n]<<" "<<dp[n]<<" "<<path[n].F-1<<" "<<path[n].S-1<<endl;
 }
 
 int32_t main() {
     fast;
-  solve();
+   solve();
     return 0;
 }
