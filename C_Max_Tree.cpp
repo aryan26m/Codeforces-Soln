@@ -120,41 +120,62 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-int n,a,b;
-int sc;
-vector<vector<pair<int,int>>> adj;
 
 // Solve Function
 void solve() {
     // Write your logic here
-    cin>>n>>a>>b;
-     vi v=enterv(n);
-     cin>>sc;
-    map<int,vi> mp;
-    for(int i=0;i<n;i++){
-        mp[v[i]].pb(i);
-    }   
-    int total=n+1+mp.size();
-    vector<vector<pair<int,int>>>g(total);
-    for(int i=1;i<n;i++){
-        g[i].push_back({i+1, b});
-        g[i+1].push_back({i, b});
-    }
-      int ex = n+1;
-    for(auto i:mp){
-        for(auto j:i.second){
-            g[ex].push_back({j,a});
-            g[j].push_back({ex,0});
-        }
-        ex++;
-    }
-    
-    debug(g);
+    int n;
+        cin >> n;
+        vector<vector<int>> g(n + 1);
+        vector<int> indeg(n + 1, 0);
 
-}
+        for (int i = 0; i < n - 1; ++i) {
+            int a, b;
+           int x, y;
+            cin >> a >> b >> x >> y;
+            int u = min(a, b);
+            int v = max(a, b);
+
+            if (x >= y) {
+                g[v].push_back(u);
+                indeg[u]++;
+            } 
+            else {
+                g[u].push_back(v);
+                indeg[v]++;
+            }
+        }
+        queue<int> q;
+        for (int i = 1; i <= n; ++i)
+            if (indeg[i] == 0) {
+                q.push(i);
+            }
+
+        vector<int> topo;
+        topo.reserve(n);
+        while (!q.empty()) {
+            int u = q.front(); q.pop();
+            topo.push_back(u);
+            for (int v : g[u]) {
+                if (--indeg[v] == 0) q.push(v);
+            }
+        }
+        vector<int> p(n + 1, 0);
+        for (int i = 0; i < n; ++i) {
+            p[topo[i]] = i + 1;
+        }
+
+        for (int i = 1; i <= n; ++i) {
+            if (i > 1) cout << ' ';
+            cout << p[i];
+        }
+        cout << endl;
+    }
 
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
     return 0;
 }

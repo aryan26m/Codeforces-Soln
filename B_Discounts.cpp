@@ -120,41 +120,36 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-int n,a,b;
-int sc;
-vector<vector<pair<int,int>>> adj;
 
 // Solve Function
 void solve() {
     // Write your logic here
-    cin>>n>>a>>b;
-     vi v=enterv(n);
-     cin>>sc;
-    map<int,vi> mp;
-    for(int i=0;i<n;i++){
-        mp[v[i]].pb(i);
-    }   
-    int total=n+1+mp.size();
-    vector<vector<pair<int,int>>>g(total);
-    for(int i=1;i<n;i++){
-        g[i].push_back({i+1, b});
-        g[i+1].push_back({i, b});
-    }
-      int ex = n+1;
-    for(auto i:mp){
-        for(auto j:i.second){
-            g[ex].push_back({j,a});
-            g[j].push_back({ex,0});
-        }
-        ex++;
-    }
-    
-    debug(g);
+    int n, k;
+        cin >> n >> k;
+       vi a=enterv(n);
+       vi b=enterv(k);
+        
+        sort(a.begin(), a.end(), greater< int>()); 
+        sort(b.begin(), b.end());                       
 
+        int total = 0;
+        for (int v : a) total += v;
+
+        int sum = 0;
+        int idx = 0;
+        for (int i = 0;i<k;i++) {
+            if (idx + b[i] > n) break; 
+            sum +=a[idx+b[i]-1];
+            idx += b[i];
+        }
+        int ans=total-sum;
+        cout << (ans) << endl;
 }
 
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
     return 0;
 }

@@ -120,41 +120,52 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-int n,a,b;
-int sc;
-vector<vector<pair<int,int>>> adj;
 
 // Solve Function
 void solve() {
-    // Write your logic here
-    cin>>n>>a>>b;
-     vi v=enterv(n);
-     cin>>sc;
-    map<int,vi> mp;
-    for(int i=0;i<n;i++){
-        mp[v[i]].pb(i);
-    }   
-    int total=n+1+mp.size();
-    vector<vector<pair<int,int>>>g(total);
-    for(int i=1;i<n;i++){
-        g[i].push_back({i+1, b});
-        g[i+1].push_back({i, b});
+    int n;
+    cin >> n;
+    vector<int> p(n + 1);
+    int k = 0;
+    vector<char> present(n + 1, 0);
+    for (int i = 1; i <= n; ++i) {
+        cin >> p[i];
+        if (p[i] == 0) ++k;
+        else if (p[i] >= 1 && p[i] <= n) present[p[i]] = 1;
     }
-      int ex = n+1;
-    for(auto i:mp){
-        for(auto j:i.second){
-            g[ex].push_back({j,a});
-            g[j].push_back({ex,0});
+    int missing_single = -1;
+    if (k == 1) {
+        for (int x = 1; x <= n; ++x) if (!present[x]) { missing_single = x; break; }
+    }
+    int pref = 0;
+    for (int i = 1; i <= n; ++i) {
+        if (p[i] != 0) {
+            if (p[i] == i) ++pref;
+            else break;
+        } else { 
+            if (k == 1 && missing_single == i) ++pref;
+            else break;
         }
-        ex++;
     }
-    
-    debug(g);
-
+    int suf = 0;
+    for (int i = n; i >= 1; --i) {
+        if (p[i] != 0) {
+            if (p[i] == i) ++suf;
+            else break;
+        } else { 
+            if (k == 1 && missing_single == i) ++suf;
+            else break;
+        }
+    }
+    int ans = n - pref - suf;
+    if (ans < 0) ans = 0;
+    cout << ans << '\n';
 }
 
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
     return 0;
 }

@@ -120,41 +120,61 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-int n,a,b;
-int sc;
-vector<vector<pair<int,int>>> adj;
 
 // Solve Function
 void solve() {
-    // Write your logic here
-    cin>>n>>a>>b;
-     vi v=enterv(n);
-     cin>>sc;
-    map<int,vi> mp;
-    for(int i=0;i<n;i++){
-        mp[v[i]].pb(i);
-    }   
-    int total=n+1+mp.size();
-    vector<vector<pair<int,int>>>g(total);
-    for(int i=1;i<n;i++){
-        g[i].push_back({i+1, b});
-        g[i+1].push_back({i, b});
-    }
-      int ex = n+1;
-    for(auto i:mp){
-        for(auto j:i.second){
-            g[ex].push_back({j,a});
-            g[j].push_back({ex,0});
-        }
-        ex++;
-    }
+    int n;
+    cin >> n;
+    vi a = enterv(n);
+    vi b = enterv(n);
+    const int MOD2 = 998244353;
     
-    debug(g);
+    int dp[2] = {1, 1};
+    if (n == 1) {
+        cout << (dp[0] + dp[1]) % MOD2 << '\n';
+        return;
+    }
 
+    for (int i = 0; i < n - 1; ++i) {
+        int nxt0 = 0, nxt1 = 0;
+        for (int j = 0; j < 2; ++j) {
+            long long crnt1, crnt2;
+            if (j == 0) {
+                crnt1 = a[i];
+                crnt2 = b[i];
+            } else {
+                crnt1 = b[i];
+                crnt2 = a[i];
+            }
+
+            for (int k = 0; k < 2; ++k) {
+                long long nextf, nexts;
+                if (k == 0) {
+                    nextf = a[i + 1];
+                    nexts = b[i + 1];
+                } else {
+                    nextf = b[i + 1];
+                    nexts = a[i + 1];
+                }
+
+                if (crnt1 <= nextf && crnt2 <= nexts) {
+                    if (k == 0)
+                        nxt0 = (nxt0 + dp[j]) % MOD2;
+                    else
+                        nxt1 = (nxt1 + dp[j]) % MOD2;
+                }
+            }
+        }
+        dp[0] = nxt0;
+        dp[1] = nxt1;
+    }
+    cout << (dp[0] + dp[1]) % MOD2 << '\n';
 }
 
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
     return 0;
 }

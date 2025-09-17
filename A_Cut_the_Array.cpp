@@ -120,41 +120,29 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-int n,a,b;
-int sc;
-vector<vector<pair<int,int>>> adj;
 
 // Solve Function
 void solve() {
     // Write your logic here
-    cin>>n>>a>>b;
-     vi v=enterv(n);
-     cin>>sc;
-    map<int,vi> mp;
-    for(int i=0;i<n;i++){
-        mp[v[i]].pb(i);
-    }   
-    int total=n+1+mp.size();
-    vector<vector<pair<int,int>>>g(total);
+    int n;
+    cin>>n;
+    vi v=enterv(n);
+    vi pre(n);
+    pre[0]=v[0];
     for(int i=1;i<n;i++){
-        g[i].push_back({i+1, b});
-        g[i+1].push_back({i, b});
+        pre[i]=pre[i-1]+v[i];
     }
-      int ex = n+1;
-    for(auto i:mp){
-        for(auto j:i.second){
-            g[ex].push_back({j,a});
-            g[j].push_back({ex,0});
-        }
-        ex++;
+    for(int i=0;i<n;i++){
+        pre[i]=pre[i]%3;
     }
-    
-    debug(g);
 
+    // debug(pre);
 }
 
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
     return 0;
 }

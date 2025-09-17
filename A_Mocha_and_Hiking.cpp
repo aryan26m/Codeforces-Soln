@@ -118,43 +118,59 @@ bool comp(int a, int b) {
 
 // Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
+   
     mp[k] += v;
 }
-int n,a,b;
-int sc;
-vector<vector<pair<int,int>>> adj;
-
-// Solve Function
+vector<bool> vis;
+vector<vector<int>> adj;
+vector<int> ans;
+void dfs(int node){
+    if(vis[node]){
+        return;
+    }
+    vis[node]=1;
+    ans.pb(node);
+    for(int x : adj[node]){
+        dfs(x);
+    }  
+}
 void solve() {
-    // Write your logic here
-    cin>>n>>a>>b;
-     vi v=enterv(n);
-     cin>>sc;
-    map<int,vi> mp;
+    int n;
+    cin>>n;
+    ans.clear();
+    adj.assign(n + 2, vector<int>());
+    vi v=enterv(n);
+    adj.resize(n+2);
+    vis.assign(n+2,0);
+    for(int i=1;i<=n-1;i++){
+        adj[i].pb(i+1);
+    }
     for(int i=0;i<n;i++){
-        mp[v[i]].pb(i);
-    }   
-    int total=n+1+mp.size();
-    vector<vector<pair<int,int>>>g(total);
-    for(int i=1;i<n;i++){
-        g[i].push_back({i+1, b});
-        g[i+1].push_back({i, b});
-    }
-      int ex = n+1;
-    for(auto i:mp){
-        for(auto j:i.second){
-            g[ex].push_back({j,a});
-            g[j].push_back({ex,0});
+        if(v[i]==0){
+            adj[i+1].pb(n+1);
         }
-        ex++;
+        else{
+            adj[n+1].pb(i+1);
+        }
     }
-    
-    debug(g);
-
+    for(int i=1;i<=n+1;i++){
+        if(adj[i].size()>=1){
+            dfs(i);
+            break;
+        }
+    }
+    if(ans.size()!=n+1){
+        cout<<-1<<endl;
+    }
+    else{
+        printArray(ans);
+    }
 }
 
 int32_t main() {
     fast;
-    solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
     return 0;
 }

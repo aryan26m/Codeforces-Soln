@@ -120,37 +120,46 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-int n,a,b;
-int sc;
-vector<vector<pair<int,int>>> adj;
 
-// Solve Function
+#define S second
+#define F first
+
+// using state=pair<int,int>
 void solve() {
-    // Write your logic here
-    cin>>n>>a>>b;
-     vi v=enterv(n);
-     cin>>sc;
-    map<int,vi> mp;
-    for(int i=0;i<n;i++){
-        mp[v[i]].pb(i);
-    }   
-    int total=n+1+mp.size();
-    vector<vector<pair<int,int>>>g(total);
-    for(int i=1;i<n;i++){
-        g[i].push_back({i+1, b});
-        g[i+1].push_back({i, b});
+    int n,m;
+    cin>>n>>m;
+    vector<vector<pair<int,int>>> adj(n+1);
+    vi inde(n+1);
+      vector<bool> vis(n+1,0);
+      vector<int> dis(n+1,1e18);
+      for(int i=0;i<m;i++){
+        int u,v,w;
+        cin>>u>>v>>w;
+        adj[u].pb({v,w});
+        inde[v]++;  
     }
-      int ex = n+1;
-    for(auto i:mp){
-        for(auto j:i.second){
-            g[ex].push_back({j,a});
-            g[j].push_back({ex,0});
+    int ans=0;
+    priority_queue <pair<int,int>> pq;
+    for(int i=1;i<=n;i++){
+        if(inde[i]==0){
+            pq.push({0,i});
+            dis[i]=0;
         }
-        ex++;
     }
-    
-    debug(g);
-
+    while(pq.size()){
+        auto p = pq.top();
+        pq.pop();
+        int node=p.second;
+        int weight=-p.first;
+        if(vis[node]) continue;
+        debug(node);
+        ans=max(ans,weight);
+        vis[node]=1;
+        for(auto x : adj[node]){
+                pq.push({-(weight+x.S),x.F});
+        }
+    }
+    debug(ans);
 }
 
 int32_t main() {

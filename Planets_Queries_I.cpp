@@ -120,14 +120,43 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-
+const int LOG=30;
 // Solve Function
+vector<vector<int>> sparse;
+void build(vector<int> &parent){
+    int n=parent.size();
+    sparse.assign(LOG,vector<int>(n));
+    for(int i=0;i<n;i++){
+          sparse[0][i]=parent[i];
+    }
+    for(int i=1;i<LOG;i++){
+        for(int j=0;j<n;j++){
+            sparse[i][j]=sparse[i-1][sparse[i-1][j]];
+        }
+    }
+}
+int query(int a,int k){
+   int cur=a;
+   for(int i=0;i<LOG;i++){
+       if(k&(1<<i)){
+        cur=sparse[i][cur];
+       }
+   }
+   return cur;
+}
 void solve() {
-    // Write your logic here
     int n,m;
     cin>>n>>m;
     vi v=enterv(n);
-    
+    for(int i=0;i<n;i++){
+v[i]=v[i]-1;
+    }
+    build(v);
+    for(int i=0;i<m;i++){
+        int a,k;
+        cin>>a>>k;
+        cout<<query(a-1,k)+1<<endl;
+    }
 }
 
 int32_t main() {
