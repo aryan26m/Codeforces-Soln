@@ -24,12 +24,13 @@ template <class K, class V> void _print(const map<K, V> &m) { cerr << '{'; bool 
 #define all(x) (x).begin(), (x).end()
 #define vi vector<int>
 #define vvi vector<vector<int>>
-#define pii pair<int,int>
+#define pi pair<int,int>
 #define rep(i, a, b) for(int i = a; i < b; ++i)
 #define fast ios::sync_with_stdio(false); cin.tie(0);
 const int MOD = 1e9 + 7;
-const int INF = 1e18;
-
+const int inf = 1e18;
+#define ff first
+#define ss second
 // Input array
 vi enterv(int n) {
     vi a(n);
@@ -120,36 +121,54 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-int n,a,b;
+int n, a, b;
 int sc;
 vector<vector<pair<int,int>>> adj;
-
-// Solve Function
 void solve() {
-    // Write your logic here
-    cin>>n>>a>>b;
-     vi v=enterv(n);
-     cin>>sc;
-    map<int,vi> mp;
-    for(int i=0;i<n;i++){
+    cin >> n >> a >> b;
+    vector<int> v(n + 1);
+    map<int, vector<int>> mp;
+    for (int i = 1; i <= n; i++) {
+        cin >> v[i];
         mp[v[i]].pb(i);
-    }   
-    int total=n+1+mp.size();
-    vector<vector<pair<int,int>>>g(total);
-    for(int i=1;i<n;i++){
-        g[i].push_back({i+1, b});
-        g[i+1].push_back({i, b});
     }
-      int ex = n+1;
-    for(auto i:mp){
-        for(auto j:i.second){
-            g[ex].push_back({j,a});
-            g[j].push_back({ex,0});
+    cin >> sc;
+    adj.resize(n + mp.size() + 1);
+    for (int i = 1; i < n; i++) {
+        adj[i].pb({i + 1, b});
+        adj[i + 1].pb({i, b});
+    }
+    int Dnode = n + 1;
+    for (auto &v : mp) {
+        for (auto &u : v.second) {
+            adj[Dnode].pb({u, a});
+            adj[u].pb({Dnode, 0});
         }
-        ex++;
+        Dnode++;
     }
-    
-    debug(g);
+    int total=Dnode+1;
+    vi dis(total, inf), vis(total,0);
+    priority_queue<pair<int,int>>pq;
+    pq.push({0,sc});
+    dis[sc] = 0;
+    while(pq.size()){
+        pi node = pq.top();
+        pq.pop();
+        int w = -node.ff;
+        int u = node.ss;
+        if(vis[u]==1)continue;
+        vis[u] = 1;
+        for(auto i:adj[u]){
+            if(dis[i.ff]>dis[u]+i.ss){
+                dis[i.ff] = dis[u]+i.ss;
+                pq.push({-dis[i.ff], i.ff});
+            }
+        }
+    }
+    for(int i=1;i<=n;i++){
+        cout<<dis[i]<<" ";
+    }
+    cout<<endl;
 
 }
 

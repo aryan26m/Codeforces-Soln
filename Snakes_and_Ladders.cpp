@@ -123,38 +123,46 @@ void push(map<int, int> &mp, int k, int v) {
 
 // Solve Function
 void solve() {
-      int n;
-        cin >> n;
-       vi p=enterv(n);
-
-        vector<int> pos(n + 1, -1);
-        bool check = true;
-        for (int i = 0; i < n; ++i) {
-            pos[p[i]]=i;
-        }
-        if (!check) {
-             cout << "NO" <<endl; 
-             return;
+    int n;
+    cin>>n;
+    vector<int> g(101);
+    for(int i=1;i<=100;i++){
+        g[i]=i;
+    }
+    for(int i=0;i<n;i++){
+        int a,b;
+        cin>>a>>b;
+        g[a]=b;
+    }
+    int m;
+    cin>>m;
+    for(int i=0;i<m;i++){
+        int a,b;
+        cin>>a>>b;
+        g[a]=b;
+    }
+    vector<int> dis(101,1e18);
+    queue<int> pq;
+    pq.push(1);
+    dis[1]=0;
+    while (pq.size()){
+        int node=pq.front();
+        pq.pop();
+        for(int i=1;i<=6;i++){
+            int next_pos = node + i;
+            if(next_pos >= 1 && next_pos <= 100){
+                int nxtnode = g[next_pos];
+                if(dis[nxtnode] == 1e18){
+                    dis[nxtnode] = dis[node] + 1;
+                    pq.push(nxtnode);
+                }
             }
-        int i = 0, j = n - 1;
-        for (int k = 1; k <= n; ++k) {
-            if (pos[k] == i) {
-                i++;
-            } else if (pos[k] == j) {
-                j--;
-            } else {
-                check = false;
-                break;
-            }
         }
-        
-        if(check){
-            cout<<"YES"<<endl;
-        }
-        else{
-            cout<<"NO"<<endl;
-        }
+    }
+    if (dis[100] == 1e18) cout << -1 << endl;
+    else cout << dis[100] << endl;
 }
+
 
 int32_t main() {
     fast;
