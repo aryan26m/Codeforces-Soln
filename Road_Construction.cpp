@@ -120,52 +120,91 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
+int  maxi=0;
+struct UnionFind {
 
-#define S second
-#define F first
+int n, set_size, *parent, *rank;
 
-// using state=pair<int,int>
-void solve() {
-    int n,m;
-    cin>>n>>m;
-    vector<vector<pair<int,int>>> adj(n+1);
-    vi inde(n+1);
-      vector<bool> vis(n+1,0);
-      vector<int> dis(n+1,1e18);
-      for(int i=0;i<m;i++){
-        int u,v,w;
-        cin>>u>>v>>w;
-        adj[u].pb({v,w});
-        adj[v].pb({u,w});
-        inde[v]++;  
-    }
-    int ans=0;
-    priority_queue <pair<int,int>> pq;
-    pq.push({0,1});
-    while(pq.size()){
+UnionFind(){}
 
-        auto p = pq.top();
-        pq.pop();
-        int node=p.second;
-        int weight=-p.first;
-        if(vis[node]) continue;
-        vis[node]=1;
-        ans+=weight;
-        for(auto x : adj[node]){
-                pq.push({-(x.S),x.F});
-        }
-    }
-    for(int i=1;i<=n;i++){
-        if(vis[i]==0){
-            cout<<"IMPOSSIBLE"<<endl;
-            return;
-        }
-    }
-    cout<<ans<<endl;
+UnionFind(int a){
+
+n=set_size=a;
+
+parent =new int[n+1];
+
+rank= new int [n+1];
+
+for(int i=1;i<=n;i++) parent[i]=i,rank[i]=1;
+
 }
+
+int find(int x){
+
+if(x!=parent[x] ) return parent[x]=find(parent[x]);
+
+return x;
+
+
+}
+
+void merge(int x,int y){
+
+int xcur = find(x),ycur= find(y);
+
+if(xcur == ycur) {
+cout<<set_size<<" "<<maxi<<endl;
+    return;
+}  
+
+if(rank[xcur]>=rank[ycur]){
+
+  parent[ycur] = xcur;
+
+  rank[xcur] += rank[ycur];
+
+}
+
+else{
+
+  parent[xcur] = ycur;
+
+  rank[ycur] += rank[xcur];
+
+}
+
+set_size--;
+maxi=max(max(rank[xcur],rank[ycur]),maxi);
+cout<<set_size<<" "<<maxi<<endl;
+}
+void reset(){
+
+set_size=n;
+
+for(int i=1;i<=n;i++) parent[i]=i, rank[i]=1;
+
+}
+
+int size() { return set_size;}
+
+void print(){ for(int i=1;i<=n;i++) cout<< i << "->" << parent[i] << endl;}
+
+};
+// Solve Function
+void solve() {
+    // Write your logic here
+       int n,m;
+       cin>>n>>m;
+       UnionFind uf(n);
+       for(int i=0;i<m;i++){
+        int u,v;
+        cin>>u>>v;
+        uf.merge(u,v);
+       }
+    }
 
 int32_t main() {
     fast;
-    solve();
+solve();
     return 0;
 }
