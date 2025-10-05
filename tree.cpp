@@ -120,71 +120,44 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-
-// Solve Function
+int n;
+vector<vector<int,int>> g(n+1);
+vector<int> parent(n+1,0);
+vector<int> depth(n+1,0);
+vector<bool> isleaf(n+1,0);
+vector<int> subtre(n+1);
+vector<int> nochild(n+1);
+void dfs(int node,int par,int dep){
+    parent[node]=par;
+    depth[node]=dep;
+    nochild[node]=0;
+    subtre[node]=1;
+    for(auto v :  g[node]){
+        if(v!=par){
+            nochild[node]++;
+            dfs(v,node,depth+1);
+            subtre[node]+=subtre[v];
+        }
+    }
+    if(nochild[node]==0){
+        isleaf[node]=1;
+    }
+}
 void solve() {
     // Write your logic here
-    int n,q;
-cin>>n>>q;
-vi v=enterv(n);
-vector <int> pre;
-vector <int> oddsm(n+1,0);
-pre.assign(n,0);
-if(v[0]==0){
-    oddsm[0]=0;
+    cin>>n;
+    for(int i=0;i<n-1;i++){
+        int a,b;
+        cin>>a>>b;
+        g[a].pb(b);
+        g[b].pb(a);
+    }
+    dfs(1,0,0);
 }
-rep(i,1,n){
-    if(v[i]==v[i-1]){
-        pre[i]=1;
-    }
-    if(v[i-1]==0){
-        oddsm[i]=oddsm[i-1]+1;
-    }
-    else{
-        oddsm[i]=oddsm[i-1];
-    }
-}
-if(v[n-1]==0){
-    oddsm[n]=oddsm[n-1]+1;
-}
-else{
-    oddsm[n]=oddsm[n-1];
-}
-vector<int>sum(n);
-sum[0]=pre[0];
-rep(i,1,n){
-    sum[i]=sum[i-1]+pre[i];
-}
-for(int i=0;i<q;i++){
-    int l,r;
-    cin>>l>>r;
-    int ans=0;
-    // debug(oddsm[r]);
-    // debug(oddsm[l-1]);
-    bool check=false;
-    if(((oddsm[r]-oddsm[l-1])%3)!=0){
-       check=true;
-    }
-    if(sum[l-1]!=sum[r-1]){
-        ans=(r-l+1)/3;
-    }
-    else{
-        ans=(r-l+1)/3;
-        ans+=1;
-    }
 
-    if(check){
-        cout<<-1<<endl;
-    }
-    else{
-     cout<<ans<<endl;
-    }
-}
-}
 int32_t main() {
     fast;
     int t = 1;
-    cin >> t;
-    while (t--) solve();
+     solve();
     return 0;
 }
