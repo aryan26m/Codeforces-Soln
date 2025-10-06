@@ -111,126 +111,46 @@ int nCr(int n, int r, int p = MOD) {
     return fact[n] * modInverse(fact[r], p) % p * modInverse(fact[n - r], p) % p;
 }
 
-// Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
 }
 
-// Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
 
 int n;
 vvi g;
-vi dist, par;
-vi depth;
-vi total;
-int farthest_node;
-void dfs(int node,int parent,int dep ,int d){
-    depth[node]=dep;
-    if(depth[node]==(d/2)){
-        total[node]=1;
-    }
-    for(auto &x:g[node]){
-        if(x!=parent){
-            dfs(x,node,dep+1,d);
-            total[node]+=total[x];
-        }
-    }
+vi value;
+vi maxi;
+     void dfs(int node,int par,int maxival,int minival){
+maxi[node]=max(abs(value[node]-maxival),abs(value[node]-minival));
+for(auto x : g[node]){
+     if(x!=par){
+         dfs(x,node,max(maxival,value[node]),min(minival,value[node]));
+      }
 }
-void bfs(int start,int parent) {
-    dist.assign(n + 1, -1);
-    par.assign(n + 1, 0);
-    queue<int> q;
-    dist[start] = 0;
-    par[start] = parent;
-    q.push(start);
-
-    farthest_node = start;
-    while (!q.empty()) {
-        int u = q.front(); q.pop();
-        if (dist[u] > dist[farthest_node]) farthest_node = u;
-        for (int v : g[u]) {
-            if (dist[v] == -1 && v!=parent) {
-                dist[v] = dist[u] + 1;
-                par[v] = u;
-                q.push(v);
-            }
-        }
-    }
 }
-
 void solve() {
-    cin >> n;
-    g.assign(n + 1, {});
-    depth.assign(n+1,0);
-    total.assign(n+1,0);
-    for (int i = 0; i < n - 1; i++) {
-        int a, b; cin >> a >> b;
-        g[a].pb(b); g[b].pb(a);
+   cin>>n;
+   value.assign(n+1,0);
+   for(int i=1;i<=n;i++){
+    cin>>value[i];
+   }
+   g.resize(n+1);
+   maxi.assign(n+1,0);
+   for(int i=0;i<n-1;i++){
+       int a,b;
+       cin>>a>>b;
+       g[a].pb(b);
+       g[b].pb(a);
     }
-
-    if (n == 1) { cout << 1 << "\n"; return; }
-
-    bfs(1,0);
-    int u = farthest_node;
-
-    bfs(u,0);
-    int v = farthest_node;
-
-    vector<int> dia;
-    for (int x = v; x != 0; x = par[x]) dia.pb(x);
-    reverse(dia.begin(), dia.end());
-
-    int diasize = (int)dia.size();
-    int len = diasize - 1;
-
-    if (len%2==1) {
-        int c1=dia[(len/2)+1];
-        int c2=dia[(len/2)];
-        bfs(c1,c2);
-        int ans=1;
-        int cnt=0;
-        for(int i=1;i<=n;i++){
-            if(dist[i]==(len/2)){
-                cnt++;
-            }
-        }
-        ans=ans*cnt;
-        cnt=0;
-        bfs(c2,c1);
-        for(int i=1;i<=n;i++){
-            if(dist[i]==(len/2)){
-                cnt++;
-            }
-        }
-        ans=ans*cnt;
-        cout<<ans<<endl;
-    }
-    else {
-        vector<int> branches;
-        int cntr=dia[(len/2)];
-        dfs(cntr,0,0,len);
-        for(auto x:g[cntr]){
-            if(total[x]!=0){
-                branches.pb(total[x]);
-            }
-        }
-        // Apply product of sum logic for permutation pairs
-        int num = 0;
-        int k = branches.size();
-        int pref = 0;
-        for (int i = 0; i < k; i++) {
-            num += branches[i] * pref;
-            pref += branches[i];
-        }
-        cout << num << endl;
-    }
+   dfs(1,0,-1e9,1e9);
+   debug(maxi);
 }
 
 int32_t main() {
     fast;
-    solve();
+     solve();
     return 0;
 }
