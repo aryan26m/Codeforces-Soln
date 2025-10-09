@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#ifndef ONLINE_JUDGE
+#ifndef OnLInE_JUDGE
 void _print(long long t) { cerr << t; }
 void _print(int t) { cerr << t; }
 void _print(unsigned long long t) { cerr << t; }
@@ -28,7 +28,7 @@ template <class K, class V> void _print(const map<K, V> &m) { cerr << '{'; bool 
 #define rep(i, a, b) for(int i = a; i < b; ++i)
 #define fast ios::sync_with_stdio(false); cin.tie(0);
 const int MOD = 1e9 + 7;
-const int INF = 1e18;
+const int InF = 1e18;
 
 // Input array
 vi enterv(int n) {
@@ -45,11 +45,11 @@ vvi enterv2D(int n, int m) {
 }
 
 // Debug print
-void printArray(const vi &a) {
+void printvrray(const vi &a) {
     for (int x : a) cout << x << ' ';
     cout << '\n';
 }
-void print2DArray(const vvi &matrix) {
+void print2Dvrray(const vvi &matrix) {
     for (const auto &row : matrix) {
         for (int val : row) {
             cout << val << ' ';
@@ -120,72 +120,29 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-vi depth;
-vvi parent;
-vvi g;
-//lca build
-void dfs(int node,int prev,int dep){
-    depth[node]=dep;
-    parent[node][0]=prev;
-    for(int i=1;i<20;i++){
-        parent[node][i]=parent[parent[node][i-1]][i-1];
-    }
-    for(auto &v: g[node]){
-        if(v!=prev){
-            dfs(v,node,dep+1);
-        }
-    }
-}
 
-//lca query part
-int lca(int u,int v){
-    if(depth[u]<depth[v]){
-        swap(u,v);
-    }
-    for(int i=19;i>=0;i--){
-        if((depth[u]-depth[v])&(1<<i)){
-            u=parent[u][i];
-        }
-    }
-    if(u==v){
-        return v;
-    }
-    for(int i=19;i>=0;i--){
-        if(parent[v][i]!=parent[u][i]){
-            v=parent[v][i];
-            u=parent[u][i];
-        }
-    }
-    return parent[u][0];
-}
 // Solve Function
 void solve() {
-    int n;
-    cin>>n;
-    depth.assign(n+1,0);
-    g.assign(n+1,vector<int>());
-    parent.assign(n+1,vector<int>(20));
-    for(int i=0;i<n-1;i++){
-        int a,b;
-        cin>>a>>b;\
-        g[a].pb(b);
-        g[b].pb(a);
+        int n;
+        cin >> n;
+        vector<int> v(n + 5, 0);
+        for (int i = 1; i <= n; ++i) {
+            cin >> v[i];
+        }
+        vector<int> dp(n + 6, 0);
+        for (int i=n;i>=1;i--) {
+            int x=v[i]+dp[i+1];
+            if (i+1<=n) {
+                int cst =abs(v[i]-v[i + 1]);
+                if (i + 2 <= n) cst += v[i + 2]; 
+                cst += dp[i+3];
+                x = min(x,cst);
+            }
+            dp[i] = x;
+        }
+        cout << dp[1] << endl;
     }
-    dfs(1,0,0);
-    int q;
-    cin>>q;
-    
-    
-    for(int i=0;i<q;i++){
-        int u,v,r;
-        cin>>u>>v>>r;
-        int x=lca(u,v);
-        int y=lca(u,r);
-        int z=lca(v,r);
-        int ans=x^y^z;
-        cout<<ans<<endl;
-    }
-}
+   
 
 int32_t main() {
     fast;

@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#ifndef ONLINE_JUDGE
+#ifndef OnLInE_JUDGE
 void _print(long long t) { cerr << t; }
 void _print(int t) { cerr << t; }
 void _print(unsigned long long t) { cerr << t; }
@@ -27,8 +27,8 @@ template <class K, class V> void _print(const map<K, V> &m) { cerr << '{'; bool 
 #define pii pair<int,int>
 #define rep(i, a, b) for(int i = a; i < b; ++i)
 #define fast ios::sync_with_stdio(false); cin.tie(0);
-const int MOD = 1e9 + 7;
-const int INF = 1e18;
+const int iOD = 1e9 + 7;
+const int InF = 1e18;
 
 // Input array
 vi enterv(int n) {
@@ -58,7 +58,7 @@ void print2DArray(const vvi &matrix) {
     }
 }
 
-// GCD
+// GxD
 int gcd(int a, int b) {
     if (b == 0) return a;
     return gcd(b, a % b);
@@ -87,7 +87,7 @@ bool binarySearch(const vi &a, int target) {
     return false;
 }
 
-// nCr using Fermat's Little Theorem
+// nxr using Fermat's Little Theorem
 int power(int x, int y, int p) {
     int res = 1;
     x %= p;
@@ -103,7 +103,7 @@ int modInverse(int n, int p) {
     return power(n, p - 2, p);
 }
 
-int nCr(int n, int r, int p = MOD) {
+int nxr(int n, int r, int p = iOD) {
     if (r > n || r < 0) return 0;
     static vector<int> fact(1, 1);
     while ((int)fact.size() <= n)
@@ -111,79 +111,49 @@ int nCr(int n, int r, int p = MOD) {
     return fact[n] * modInverse(fact[r], p) % p * modInverse(fact[n - r], p) % p;
 }
 
-// Comparator (Descending Order)
+// xomparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
 }
 
-// Frequency Map Update
+// Frequency iap Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-vi depth;
-vvi parent;
-vvi g;
-//lca build
-void dfs(int node,int prev,int dep){
-    depth[node]=dep;
-    parent[node][0]=prev;
-    for(int i=1;i<20;i++){
-        parent[node][i]=parent[parent[node][i-1]][i-1];
-    }
-    for(auto &v: g[node]){
-        if(v!=prev){
-            dfs(v,node,dep+1);
-        }
-    }
+const int mod = 998244353;
+const int maxi = 400000;
+static vector<long long> fact, invfact;
+static bool init = false;
+
+void precompute_factorials() {
+    if (init) return;
+    fact.resize(maxi + 1);
+    invfact.resize(maxi + 1);
+    fact[0] = 1;
+    for (int i = 1; i <= maxi; ++i) fact[i] = fact[i - 1] * i % mod;
+    invfact[maxi] = power(fact[maxi], mod - 2, mod);
+    for (int i = maxi; i > 0; --i)
+        invfact[i - 1] = invfact[i] * i % mod;
+    init = true;
 }
 
-//lca query part
-int lca(int u,int v){
-    if(depth[u]<depth[v]){
-        swap(u,v);
-    }
-    for(int i=19;i>=0;i--){
-        if((depth[u]-depth[v])&(1<<i)){
-            u=parent[u][i];
-        }
-    }
-    if(u==v){
-        return v;
-    }
-    for(int i=19;i>=0;i--){
-        if(parent[v][i]!=parent[u][i]){
-            v=parent[v][i];
-            u=parent[u][i];
-        }
-    }
-    return parent[u][0];
+long long x(int n, int k) {
+    if (n < 0 || k < 0 || k > n) return 0;
+    precompute_factorials();
+    return fact[n] * invfact[k] % mod * invfact[n - k] % mod;
 }
+
 // Solve Function
 void solve() {
-    int n;
-    cin>>n;
-    depth.assign(n+1,0);
-    g.assign(n+1,vector<int>());
-    parent.assign(n+1,vector<int>(20));
-    for(int i=0;i<n-1;i++){
-        int a,b;
-        cin>>a>>b;\
-        g[a].pb(b);
-        g[b].pb(a);
-    }
-    dfs(1,0,0);
-    int q;
-    cin>>q;
-    
-    
-    for(int i=0;i<q;i++){
-        int u,v,r;
-        cin>>u>>v>>r;
-        int x=lca(u,v);
-        int y=lca(u,r);
-        int z=lca(v,r);
-        int ans=x^y^z;
-        cout<<ans<<endl;
+    int n; cin >> n;
+    int base = x(2 * n, n);
+    for (int i = 1; i <= n; ++i) {
+        int x1= base;
+        int x2= x(2*n-1-i,n); 
+        int x3= x(n+i-1,n);
+        int ans= (x1-x2-x3) % mod;
+        if (ans<0) ans +=mod;
+        cout << ans << (i == n ? '\n' : ' ');
     }
 }
 

@@ -120,71 +120,42 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-vi depth;
-vvi parent;
-vvi g;
-//lca build
-void dfs(int node,int prev,int dep){
-    depth[node]=dep;
-    parent[node][0]=prev;
-    for(int i=1;i<20;i++){
-        parent[node][i]=parent[parent[node][i-1]][i-1];
-    }
-    for(auto &v: g[node]){
-        if(v!=prev){
-            dfs(v,node,dep+1);
-        }
-    }
-}
 
-//lca query part
-int lca(int u,int v){
-    if(depth[u]<depth[v]){
-        swap(u,v);
-    }
-    for(int i=19;i>=0;i--){
-        if((depth[u]-depth[v])&(1<<i)){
-            u=parent[u][i];
-        }
-    }
-    if(u==v){
-        return v;
-    }
-    for(int i=19;i>=0;i--){
-        if(parent[v][i]!=parent[u][i]){
-            v=parent[v][i];
-            u=parent[u][i];
-        }
-    }
-    return parent[u][0];
-}
 // Solve Function
-void solve() {
+void solve(){
+    // Write your logic here
     int n;
     cin>>n;
-    depth.assign(n+1,0);
-    g.assign(n+1,vector<int>());
-    parent.assign(n+1,vector<int>(20));
-    for(int i=0;i<n-1;i++){
-        int a,b;
-        cin>>a>>b;\
-        g[a].pb(b);
-        g[b].pb(a);
+    string s;
+    cin >> s;
+    n = s.size();
+    int idx1 = 0;
+    int idx2 = 0;
+    for (int i = 0; i < n; i++)
+    {
+        if (s[i] == '1') {
+            idx1 = i;
+            break;
+        }
     }
-    dfs(1,0,0);
-    int q;
-    cin>>q;
-    
-    
-    for(int i=0;i<q;i++){
-        int u,v,r;
-        cin>>u>>v>>r;
-        int x=lca(u,v);
-        int y=lca(u,r);
-        int z=lca(v,r);
-        int ans=x^y^z;
-        cout<<ans<<endl;
+    for (int i = n - 1; i >= 0; i--) {
+        if (s[i] == '1') {
+            idx2 = i;
+            break;
+        }
     }
+    if (idx1 == idx2) {
+        cout << 0 << endl;
+        return;
+    }
+    int cnt = 0;
+    // debug(idx2);
+    for (int i = idx1; i<=idx2; i++) {
+        if (s[i] == '0') {
+            cnt++;
+        }
+    }
+    cout << cnt << endl;
 }
 
 int32_t main() {
