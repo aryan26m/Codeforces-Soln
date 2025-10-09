@@ -115,22 +115,96 @@ int nCr(int n, int r, int p = MOD) {
 bool comp(int a, int b) {
     return a > b;
 }
-
 // Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
+vvi g;
+vvi parent;
+vvi dp;
+vi value;
+vi depth;
+
+void dfs(int node,int prev,int dep){
+    depth[node]=dep;
+    parent[node][0]=prev;
+    dp[node][0]=value[node];
+    for(int i=1;i<20;i++){
+        parent[node][i]=parent[parent[node][i-1]][i-1];
+        dp[node][i]=gcd(dp[node][i-1],dp[parent[node][i-1]][i-1]);
+    }
+    for(int x:g[node]){
+        if(x!=prev){
+            dfs(x,node,dep+1);
+        }
+    }
+}
+
+int lca(int u,int v){
+    if(depth[u]<depth[v]){
+        swap(u,v);
+    }
+    int ans=0;
+    for(int i=19;i>=0;i--){
+        if((depth[u]-depth[v])&(1<<i)){
+            ans=gcd(ans,dp[u][i]);
+            u=parent[u][i];
+        }
+    }
+    if(u==v){
+        return gcd(ans,value[u]);
+    }
+    for(int i=19;i>=0;i--){
+        if(parent[v][i]!=parent[u][i]){
+            ans=gcd(ans,dp[v][i]);
+            v=parent[v][i];
+            ans=gcd(ans,dp[u][i]);
+            u=parent[u][i];
+        }
+    }
+    ans = gcd(ans, value[v]);
+    ans = gcd(ans, value[u]);
+    ans = gcd(ans, value[parent[u][0]]);
+    return ans;
+}
 
 // Solve Function
 void solve() {
-    // Write your logic here
-    
+    int n;
+    cin>>n;
+    value.assign(n+1,0);
+    depth.assign(n+1,0);
+    parent.assign(n+1,vector<int>(20));
+    dp.assign(n+1,vector<int>(20));
+    for(int i=1;i<=n;i++){
+        cin>>value[i];
+    }
+    g.clear();
+    g.resize(n+1);
+    for(int i=0;i<n-1;i++){
+        int a,b;
+        cin>>a>>b;
+        g[a].pb(b);
+        g[b].pb(a);
+    }
+    dfs(1, 0, 0);
+    int q;
+    cin>>q;
+    for(int i=0;i<q;i++){
+        int a,b;
+        cin>>a>>b;
+        cout<<lca(a,b)<<endl;
+    }
 }
 
 int32_t main() {
     fast;
-    int t = 1;
-    cin >> t;
-    while (t--) solve();
+    int t;
+    cin>>t;
+    while (t--)
+    {
+        solve();
+    }
+    
     return 0;
 }
