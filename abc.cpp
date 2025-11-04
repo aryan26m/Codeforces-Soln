@@ -120,57 +120,54 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-#define S second
-#define F first
-using state=pair<int,int>;
-vector<bool>vis;
-vector<vector<state>> g;
-vector<int> dis;
-int n,m;
-void dijkstra(int node){
-    priority_queue<state> q;
-    q.push({0,1});
-    dis[node]=0;
-    while (q.size())
-    {
-        auto p=q.top();
-        q.pop();
-        int u=p.S;
-        int wi=-p.F;
-        if(vis[u]){
-            continue;
-        }
-        vis[u]=1;
-        for(auto x:g[u]){
-            int w=x.S;
-            int v=x.F;
-            if(dis[v]>wi+w){
-                dis[v]=wi+w;
-                q.push({-dis[v],v});
-            }
-        }
-    }
+int msb_index(int x) {
+    if (x == 0) return -1;
+    int idx = 0;
+    while (x >>= 1) ++idx;
+    return idx;
 }
-void solve() {
-cin>>n>>m;
-g.resize(n+1);
-dis.assign(n+1,INF);
-vis.assign(n+1,0);
-for(int i=0;i<m;i++){
-    int u,v,w;
-    cin>>u>>v>>w;
-    g[u].pb({v,w});
+int query(int type, int l, int r) {
+    cout << type << " " << l << " " << r << endl;
+    cout.flush();
+    int result;
+    cin >> result;
+    return result;
 }
 
-dijkstra(1);
-for(int i=1;i<=n;i++){
-    cout<<dis[i]<<" ";
+void output(int ans1, int ans2) {
+    cout << "! " << ans1 << " " << ans2 << endl;
+    cout.flush();
 }
+
+void solve() {
+    int n;
+    cin >> n;
+    int total = n * (n + 1) / 2;
+    int newtotal = query(2,1,n);
+    int extra = newtotal-total;
+    int ans1 = n;
+    int l = 1;
+    int r = n;
+    while (l <= r) {
+        int mid = l+(r-l)/2;
+        int a = query(2,1,mid);
+        int v = query(1,1,mid);
+        if (a > v) {
+            ans1 =mid;
+            r = mid-1;
+        } else {
+            l = mid+1;
+        }
+    }
+    int ans2 =ans1+(extra-1);
+    output(ans1,ans2);
 }
 
 
 int32_t main() {
     fast;
-     solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
     return 0;
 }

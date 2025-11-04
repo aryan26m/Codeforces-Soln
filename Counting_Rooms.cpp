@@ -1,11 +1,29 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define debug(x) cerr << #x << 
+#ifndef ONLINE_JUDGE
+void _print(long long t) { cerr << t; }
+void _print(int t) { cerr << t; }
+void _print(unsigned long long t) { cerr << t; }
+void _print(double t) { cerr << t; }
+void _print(long double t) { cerr << t; }
+void _print(char t) { cerr << t; }
+void _print(const string &t) { cerr << t; }
+void _print(bool t) { cerr << (t ? "true" : "false"); }
+template <class T, class U> void _print(const pair<T, U> &p) { cerr << '{'; _print(p.first); cerr << ", "; _print(p.second); cerr << '}'; }
+template <class T> void _print(const vector<T> &v) { cerr << '['; for (size_t i = 0; i < v.size(); ++i) { _print(v[i]); if (i + 1 < v.size()) cerr << ", "; } cerr << ']'; }
+template <class T> void _print(const set<T> &s) { cerr << '{'; bool f = true; for (auto &x : s) { if (!f) cerr << ", "; _print(x); f = false; } cerr << '}'; }
+template <class T> void _print(const multiset<T> &s) { cerr << '{'; bool f = true; for (auto &x : s) { if (!f) cerr << ", "; _print(x); f = false; } cerr << '}'; }
+template <class K, class V> void _print(const map<K, V> &m) { cerr << '{'; bool f = true; for (auto &kv : m) { if (!f) cerr << ", "; _print(kv.first); cerr << ": "; _print(kv.second); f = false; } cerr << '}'; }
+#define debug(x) do { cerr << #x << " = "; _print(x); cerr << '\n'; } while(0)
+#else
+#define debug(x) do {} while(0)
+#endif
 #define int long long
 #define pb push_back
 #define all(x) (x).begin(), (x).end()
 #define vi vector<int>
+#define vvi vector<vector<int>>
 #define pii pair<int,int>
 #define rep(i, a, b) for(int i = a; i < b; ++i)
 #define fast ios::sync_with_stdio(false); cin.tie(0);
@@ -18,11 +36,26 @@ vi enterv(int n) {
     for (int &x : a) cin >> x;
     return a;
 }
+// Input array
+vvi enterv2D(int n, int m) {
+   vvi a(n, vi(m));
+  for (int i = 0; i < n; ++i)
+ for (int &x : a[i]) cin >> x;
+ return a;
+}
 
 // Debug print
 void printArray(const vi &a) {
     for (int x : a) cout << x << ' ';
     cout << '\n';
+}
+void print2DArray(const vvi &matrix) {
+    for (const auto &row : matrix) {
+        for (int val : row) {
+            cout << val << ' ';
+        }
+        cout << '\n';
+    }
 }
 
 // GCD
@@ -87,48 +120,49 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-vector<vector<bool>> v;
-void dfs(int i,int j){
-    v[i][j]=false;
-    if(v[i-1][j]){
-        dfs(i-1,j);
+int n,m;
+vector<vector<char>> g;
+int dx[]={1,0,-1,0};
+int dy[]={0,1,0,-1};
+bool isvalid(int x,int y){
+    if(x>=0 && x<n && y>=0 && y<m && g[x][y]=='.'){
+        return true;
     }
-    if(v[i+1][j]){
-        dfs(i+1,j);
-    }
-    if(v[i][j-1]){
-        dfs(i,j-1);
-    }
-    if(v[i][j+1]){
-        dfs(i,j+1);
+    return false;
+}
+void dfs(int x,int y){
+    g[x][y]='#';
+    for(int i=0;i<4;i++){
+        int newdx=x+dx[i];
+        int newdy=y+dy[i];
+        // debug(newdx);
+        if(isvalid(newdx,newdy)){
+          dfs(newdx,newdy);  
+        }
     }
 }
-// Solve Function
-void solve() {
-    // Write your logic here
-    int n,m;
-    cin>>n>>m;
-    v.resize(n+2,vector<bool>(m+2));
-    for(int i=1;i<=n;i++){
-        for(int j=1;j<=m;j++){
-            char ch;
-            cin>>ch;
-            if(ch=='.'){
-                v[i][j]=true;
-            }
+
+void solve(){
+cin>>n>>m;
+g.resize(n);
+for(int i=0;i<n;i++){
+    for(int j=0;j<m;j++){
+       char ch;
+       cin>>ch;
+       g[i].pb(ch);
+    }
+}
+int ans=0;
+for(int i=0;i<n;i++){
+    for(int j=0;j<m;j++){
+        if(g[i][j]=='.'){
+            ans++;
+            dfs(i,j);
         }
     }
-        int cnt=0;
-        for(int i=1;i<=n;i++){
-        for(int  j=1;j<=m;j++){
-                if(v[i][j]){
-                    cnt++;
-                    dfs(i,j);
-                }
-        }
-        }
-        cout<<cnt<<endl;
-
+}
+// debug(n);
+cout<<ans<<endl;
 }
 
 int32_t main() {

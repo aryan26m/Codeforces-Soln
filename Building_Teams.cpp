@@ -119,11 +119,16 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
+vector<int> color;
+void dfs(int node,int col){
 
+}
 // Solve Function
 void solve() {
     // Write your logic here
     int n,m;
+    cin>>n>>m;
+
 }
 
 int32_t main() {

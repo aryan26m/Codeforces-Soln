@@ -125,8 +125,6 @@ void push(map<int, int> &mp, int k, int v) {
 int n,m;
 vector<vector<pair<int,int>>> adj;
 vector<vector<int>> rev;
-// vector<bool> cmp;
-// vector<bool> cmp2;
 vector<bool> vis;
 vector<bool> vis2;
 vector<int> dis;

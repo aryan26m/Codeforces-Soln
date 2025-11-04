@@ -120,57 +120,80 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-#define S second
-#define F first
-using state=pair<int,int>;
-vector<bool>vis;
-vector<vector<state>> g;
-vector<int> dis;
-int n,m;
-void dijkstra(int node){
-    priority_queue<state> q;
-    q.push({0,1});
-    dis[node]=0;
-    while (q.size())
-    {
-        auto p=q.top();
-        q.pop();
-        int u=p.S;
-        int wi=-p.F;
-        if(vis[u]){
-            continue;
-        }
-        vis[u]=1;
-        for(auto x:g[u]){
-            int w=x.S;
-            int v=x.F;
-            if(dis[v]>wi+w){
-                dis[v]=wi+w;
-                q.push({-dis[v],v});
-            }
+
+
+vvi g;
+vi depth;
+vvi parent;
+void dfs(int node,int prev,int dep){
+    depth[node]=dep;
+    parent[node][0]=prev;
+    for(int i=1;i<20;i++){
+        parent[node][i]=parent[parent[node][i-1]][i-1];
+    }
+    for(auto &v: g[node]){
+        if(v!=prev){
+            dfs(v,node,dep+1);
         }
     }
 }
+
+//lca query part
+int lca(int u,int v){
+    if(depth[u]<depth[v]){
+        swap(u,v);
+    }
+    for(int i=19;i>=0;i--){
+        if((depth[u]-depth[v])&(1<<i)){
+            u=parent[u][i];
+        }
+    }
+    if(u==v){
+        return v;
+    }
+    for(int i=19;i>=0;i--){
+        if(parent[v][i]!=parent[u][i]){
+            v=parent[v][i];
+            u=parent[u][i];
+        }
+    }
+    return parent[u][0];
+}
+
 void solve() {
-cin>>n>>m;
-g.resize(n+1);
-dis.assign(n+1,INF);
-vis.assign(n+1,0);
-for(int i=0;i<m;i++){
-    int u,v,w;
-    cin>>u>>v>>w;
-    g[u].pb({v,w});
-}
+    // Write your logic here
+    int n;
+    cin>>n;
+    g.resize(n+1);
+    parent.assign(n+1,vector<int>(20));
+    vi prefix;
+    prefix.assign(n+1,0);
+    depth.assign(n+1,0);
+    for(int i=0;i<n-1;i++){
+        int a,b,w;
+        cin>>a>>b>>w;
+        g[a].pb(b);
+        g[b].pb(a);
+    }
+    dfs(1,0,0);
+    int q;
+    cin>>q;
+    for(int i=0;i<q;i++){
+        int u,v,w;
+        cin>>u>>v>>w;
+        prefix[u]+=w;
+        prefix[v]+=w;
+        int x=lca(u,v);
+        prefix[x]-=w;
+        prefix[parent[x][0]]-=w;
 
-dijkstra(1);
-for(int i=1;i<=n;i++){
-    cout<<dis[i]<<" ";
+    }
 }
-}
-
 
 int32_t main() {
     fast;
-     solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
     return 0;
 }

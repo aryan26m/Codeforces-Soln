@@ -23,6 +23,7 @@ template <class K, class V> void _print(const map<K, V> &m) { cerr << '{'; bool 
 #define pb push_back
 #define all(x) (x).begin(), (x).end()
 #define vi vector<int>
+#define vvi vector<vector<int>>
 #define pii pair<int,int>
 #define rep(i, a, b) for(int i = a; i < b; ++i)
 #define fast ios::sync_with_stdio(false); cin.tie(0);
@@ -35,12 +36,26 @@ vi enterv(int n) {
     for (int &x : a) cin >> x;
     return a;
 }
-// Input arra
+// Input array
+vvi enterv2D(int n, int m) {
+   vvi a(n, vi(m));
+  for (int i = 0; i < n; ++i)
+ for (int &x : a[i]) cin >> x;
+ return a;
+}
 
 // Debug print
 void printArray(const vi &a) {
     for (int x : a) cout << x << ' ';
     cout << '\n';
+}
+void print2DArray(const vvi &matrix) {
+    for (const auto &row : matrix) {
+        for (int val : row) {
+            cout << val << ' ';
+        }
+        cout << '\n';
+    }
 }
 
 // GCD
@@ -105,98 +120,77 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-vector<vector<char>> adj;
-vector<vector<int>> vis;
-vector<vector<pair<int,int>>> par;
-vector<vector<char>> movedir;
-// Solve Function
 int n,m;
+vector<vector<char>> g;
 int dx[]={1,0,-1,0};
 int dy[]={0,1,0,-1};
-char dir[] = {'D','R','U','L'};
+char ch[]={'D','R','U','L'};
 
 bool isvalid(int x,int y){
-      if(x>=n || y>=m || x<0 || y<0 || adj[x][y]=='#'){
-        return false;
-      }
-      return true;
+    if(x>=0 && x<n && y>=0 && y<m && g[x][y]!='#'){
+        return true;
+    }
+    return false;
 }
-void solve() {
-    // Write your logic here
-    // int n,m;
-    cin>>n>>m;
-    adj.resize(n, vector<char>(m));
-    vis.resize(n, vector<int>(m,-1));
-    par.resize(n, vector<pair<int,int>>(m,{-1,-1}));    
-    movedir.resize(n, vector<char>(m));    
-    int xi=0;
-    int yi=0;
-    int fx=0;
-    int fy=0;
-    string s="";
-    for(int i=0;i<n;i++){
-        for(int j=0;j<m;j++){
-            cin>>adj[i][j];
-            if(adj[i][j]=='A'){
-                xi=i;
-                yi=j;
-            }
-            if(adj[i][j]=='B'){
-                fx=i;
-                fy=j;
-            }
+
+void solve(){
+cin>>n>>m;
+g.resize(n);
+vector<vector<int>> dis(n,vector<int>(m,0));
+int ix,iy,fx,fy;
+rep(i,0,n){
+    rep(j,0,m){
+        char ch;
+        cin>>ch;
+        g[i].pb(ch);
+        if(g[i][j]=='A'){
+            g[i][j]='#';
+            ix=i;
+            iy=j;
+        }    
+        if(g[i][j]=='B'){
+            fx=i;
+            fx=j;
         }
     }
-
+}
+debug(g);
+queue<pair<int,int>> q;
+q.push({ix,iy});
+dis[ix][iy]=0;
 int ans=-1;
-    queue<pair<int,int>> q;
-    q.push({xi,yi});
-    vis[xi][yi]=0;
-    while (q.size())
-    {
-        auto a=q.front();
-        q.pop();
-        int x=a.first;
-        int y=a.second;
-        int cur=vis[x][y];
-        if(x==fx && y==fy){
-            cout<<"YES"<<endl;
-            ans=cur;
-            break;
-        }
-        for(int i=0;i<4;i++){
-           int newx=x+dx[i];  
-           int newy=y+dy[i];
-           if(isvalid(newx,newy) && vis[newx][newy]==-1){
-                q.push({newx,newy});
-                vis[newx][newy]=cur+1;
-                par[newx][newy]={x,y};
-                movedir[newx][newy]=dir[i];
-           }  
+while (q.size())
+{
+    auto p=q.front();
+    q.pop();
+    int x=p.first;
+    int y=p.second;
+    if(g[x][y]=='B'){
+       ans=dis[x][y];
+       debug(ans);
+        break;
+    }
+    for(int i=0;i<4;i++){
+        int newx=x+dx[i];
+        int newy=y+dy[i];
+        if(isvalid(newx,newy)){
+            dis[newx][newy]=dis[x][y]+1;
+            q.push({newx,newy});
         }
     }
-    if(ans==-1){
-        cout<<"NO"<<endl;
-    }
-    else{
-        string s;
-
-        cout<<ans<<endl;
-        while (!(fx==xi && fy==yi))
-        {
-            s.push_back(movedir[fx][fy]);
-            auto p = par[fx][fy];
-            fx=p.first;
-            fy=p.second;
-        }
-    reverse(s.begin(),s.end());
-        cout<<s<<endl;        
-    }
+}
+if(ans==-1){
+    cout<<-1<<endl;
+}
+else{
+    cout<<"YES"<endl;
+    cout<<ans<<endl;
 
 }
+}
 
-signed main() {
+int32_t main() {
     fast;
-     solve();
+   solve();
     return 0;
 }

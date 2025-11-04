@@ -120,57 +120,142 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-#define S second
 #define F first
+#define S second
 using state=pair<int,int>;
-vector<bool>vis;
-vector<vector<state>> g;
-vector<int> dis;
+
 int n,m;
-void dijkstra(int node){
-    priority_queue<state> q;
-    q.push({0,1});
-    dis[node]=0;
+vector<state> mons;
+state st;
+vector<state> bond;
+vector<vector<char>> g;
+vector<vector<int>> dismons;
+vector<vector<int>> disper;
+vector<vector<pii>> parent;
+
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+char dirc[] = {'D', 'U', 'R', 'L'};
+
+bool is_valid(int x, int y) {
+    if(x>=0 && x<n && y>=0 && y<m && g[x][y]=='.') {
+        return true;
+    }
+    return false;
+}
+
+void monsdfs(){
+    queue<state> q;
+    for(auto x : mons){
+        q.push(x);
+        dismons[x.F][x.S]=0;
+    }
     while (q.size())
     {
-        auto p=q.top();
-        q.pop();
-        int u=p.S;
-        int wi=-p.F;
-        if(vis[u]){
-            continue;
-        }
-        vis[u]=1;
-        for(auto x:g[u]){
-            int w=x.S;
-            int v=x.F;
-            if(dis[v]>wi+w){
-                dis[v]=wi+w;
-                q.push({-dis[v],v});
+         auto p=q.front();
+         q.pop();
+         int x=p.F;
+         int y=p.S;
+         for(int i=0;i<4;i++){
+            int nx=x+dx[i];
+            int ny=y+dy[i];
+          if(is_valid(nx,ny)) {
+            if(dismons[nx][ny] > dismons[x][y]+1){
+                dismons[nx][ny]=dismons[x][y]+1;
+                q.push({nx,ny});
             }
+          }
         }
     }
 }
+
+void perdfs(state st){
+    queue<state> q;
+    q.push(st);
+    disper[st.F][st.S]=0;
+    parent[st.F][st.S] = {-1, -1};
+    while (q.size())
+    {
+         auto p=q.front();
+         q.pop();
+         int x=p.F;
+         int y=p.S;
+
+         for(int i=0;i<4;i++){
+            int nx=x+dx[i];
+            int ny=y+dy[i];
+          if(is_valid(nx,ny)) {
+            if(disper[nx][ny] > disper[x][y]+1){
+                disper[nx][ny]=disper[x][y]+1;
+                parent[nx][ny] = {x, y};
+                q.push({nx,ny});
+            }
+          }
+        }
+    }
+}
+
+// Reconstruct path from (ex,ey) to st
+string get_path(state st, state en) {
+    string path;
+    state cur = en;
+    while (cur != st) {
+        pii par = parent[cur.F][cur.S];
+        int px = par.F, py = par.S;
+        if (px == -1 && py == -1) break;
+        for (int d = 0; d < 4; ++d) {
+            if (px + dx[d] == cur.F && py + dy[d] == cur.S) {
+                path += dirc[d];
+                break;
+            }
+        }
+        cur = par;
+    }
+    reverse(path.begin(), path.end());
+    return path;
+}
+
+// Solve Function
 void solve() {
-cin>>n>>m;
-g.resize(n+1);
-dis.assign(n+1,INF);
-vis.assign(n+1,0);
-for(int i=0;i<m;i++){
-    int u,v,w;
-    cin>>u>>v>>w;
-    g[u].pb({v,w});
+    cin>>n>>m;
+    g.resize(n);
+    dismons.resize(n,vector<int>(m,INF));
+    disper.resize(n,vector<int>(m,INF));
+    parent.resize(n, vector<pii>(m, {-1, -1}));
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++){
+            char ch;
+            cin>>ch;
+            g[i].pb(ch);
+            if(ch=='M'){
+                mons.pb({i,j});
+            }
+           else if(ch=='A'){
+                st={i,j};
+                 if(i == 0 || j == 0 || i == n-1 || j == m-1) {
+                bond.push_back({i, j});
+            }
+            }
+            else if((i == 0 || j == 0 || i == n-1 || j == m-1) && ch=='.') {
+              bond.push_back({i, j});
+            }
+        }
+    }
+    monsdfs();
+    perdfs(st);
+    for(auto x  : bond){
+        if(disper[x.F][x.S]<dismons[x.F][x.S]){
+            cout<<"YES"<<endl;
+            cout<<disper[x.F][x.S]<<endl;
+            cout<<get_path(st, x)<<endl;
+            return;
+        }
+    }
+    cout << "NO" << endl;
 }
-
-dijkstra(1);
-for(int i=1;i<=n;i++){
-    cout<<dis[i]<<" ";
-}
-}
-
 
 int32_t main() {
     fast;
-     solve();
+    solve();
     return 0;
 }
