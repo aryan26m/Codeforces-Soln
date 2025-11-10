@@ -120,56 +120,128 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-#define S second
-#define F first
-using state=pair<int,int>;
-// Solve Function
-void solve() {
-    // Write your logic here
-    int n,m;
-    cin>>n>>m;
-    vector<vector<state>> g(n+1);
-    vector<state> path(n+1,{0,0});
-
-    for(int i=0;i<m;i++){
-        int u,v,w;
-         cin>>u>>v>>w;
-         g[u].pb({v,w});
+int n,m;
+vector<vector<int>> g;     
+vector<vector<int>> grev;     
+vector<vector<int>> sccGraph;     
+vector<int> value;
+vector<bool> vis;
+vector<int> order;
+vector<int> scnumb;
+void dfs(int node){
+    vis[node]=1;
+    for(int x : g[node]){
+        if(!vis[x]){
+            dfs(x);
+        }
     }
-    vector <int> dis(n+1,1e18);
-    vector<int> dp(n+1,0);
-    dp[1]=1;
-    path[1]={1,1};
-    priority_queue<state, vector<state>, greater<state>> pq;
-    pq.push({0,1});
-    dis[1]=0;    
-    while (!pq.empty())
-    {
-        auto p=pq.top();
-        pq.pop();
-        int d = p.F;
-        int node = p.S;
-        if (d > dis[node]) continue;
-        for(auto v : g[node]){
-            if(dis[v.F]>dis[node]+v.S){
-                dis[v.F]=dis[node]+v.S;
-                pq.push({dis[v.F],v.F});
-                dp[v.F]=dp[node];
-                path[v.F].F=path[node].F+1;
-                path[v.F].S=path[node].S+1;
-            }
-            else if(dis[v.F]==dis[node]+v.S){
-                dp[v.F]=(dp[v.F]+dp[node])%MOD;
-                path[v.F].F=min(path[v.F].F,path[node].F+1);
-                path[v.F].S=max(path[v.F].S,path[node].S+1);
+    order.pb(node);
+}
+
+void dfsback(int node,int &scc,int &sum){
+    vis[node]=1;
+    scnumb[node]=scc;
+    sum+=value[node];
+    for(int x : grev[node]){
+        if(!vis[x]){
+            dfsback(x,scc,sum);
+        }
+    }
+}
+void buildgraph(int n,int sc){
+    sccGraph.assign(sc+1,vector<int>());
+    for(int i=1;i<=n;i++){
+        for(auto x:g[i]){
+            if(scnumb[i]!=scnumb[x]){
+                sccGraph[scnumb[i]].pb(scnumb[x]);
             }
         }
     }
-    cout<<dis[n]<<" "<<dp[n]<<" "<<path[n].F-1<<" "<<path[n].S-1;
+}
+
+vector<int> topOrder;
+
+void computeTopologicalSort(int sc) {
+vector<int> indegree(sc+1, 0);
+for (int u = 1; u <= sc; u++) {
+for (int v : sccGraph[u]) {
+indegree[v]++;
+}
+}
+queue<int> q;
+for (int u = 1; u <=sc; u++) {
+if (indegree[u] == 0) {
+q.push(u);
+}
+}
+
+while (!q.empty()) {
+int node = q.front(); q.pop();
+topOrder.push_back(node);
+for (int neighbor : sccGraph[node]) {
+indegree[neighbor] --;
+if (indegree[neighbor] == 0) {
+q.push(neighbor);
+}
+}
+}
+}
+// Solve Function
+void solve() {
+    // Write your logic here
+    cin>>n>>m;
+    value.resize(n+1);
+    g.resize(n+1);
+    grev.resize(n+1);
+    scnumb.assign(n+1,0);
+
+    for(int i=1;i<=n;i++){
+        cin>>value[i];
+    }
+    for(int i=0;i<m;i++){
+        int u,v;
+        cin>>u>>v;
+        g[u].push_back(v);
+        grev[v].pb(u);
+    }
+    vis.assign(n+1,0);
+    for(int i=1;i<=n;i++){
+        if(!vis[i]){
+            dfs(i);
+        }
+    }
+    reverse(order.begin(),order.end());
+    vis.clear();
+    vis.assign(n+1,0);
+    int sc=0;
+    vector<int> sumofsc;
+    for(int x : order){
+        if(!vis[x]){
+            sc++;
+            int sum=0;
+            dfsback(x,sc,sum);
+            sumofsc.pb(sum);
+        }
+    }
+    buildgraph(n,sc);
+    computeTopologicalSort(sc);
+    vector<int> dp(sc+1,0);
+    // debug(topOrder);
+    for(int i:topOrder){
+        dp[i]+=sumofsc[i-1];
+        for(auto x : sccGraph[i]){
+            dp[x]=max(dp[x],dp[i]);
+        }
+    }
+    int maxi=0;
+    for(int i=1;i<=sc;i++){
+        maxi=max(maxi,dp[i]);
+    }
+    cout<<maxi<<endl;
 }
 
 int32_t main() {
     fast;
- solve();
+    solve();
     return 0;
 }

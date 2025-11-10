@@ -1,0 +1,180 @@
+// Ordered Set
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+typedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> pbds;
+// find_by_order, order_of_key
+
+// Sieve of Eratosthenes
+int n;
+vector<bool> is_prime(n + 1, true);
+is_prime[0] = is_prime[1] = false;
+for (int i = 2; i * i <= n; i++)
+{
+    if (is_prime[i])
+    {
+        for (int j = i * i; j <= n; j += i)
+            is_prime[j] = false;
+    }
+}
+
+// Sparse Table
+vector<vector<int>> st(n, vector<int>(LOG + 1));
+for (int i = 0; i < n; i++)
+{
+    cin >> v[i];
+    st[i][0] = v[i];
+}
+
+// PreProcessing
+for (int j = 1; j <= LOG; j++)
+for (int i = 0; i + (1 << j) - 1 < n; i++)
+st[i][j] = min(st[i][j - 1], st[i + (1 << (j - 1))][j - 1]);
+
+// query
+function<int(int, int)> query = [&](int L, int R) -> int
+{
+    int len = R - L + 1;
+    int k = f(len);
+    return min(st[L][k], st[R - (1 << k) + 1][k]);
+};
+
+//Segment Tree(Lazy)
+function<void(int,int,int)> build=[&](int start,int end,int index)->void{
+    if(start==end) {
+        st[index]=v[start];
+        return;
+    }
+    int mid=(start+end)/2;
+    build(start,mid,2*index);
+    build(mid+1,end,2*index+1);
+    st[index]=merge(st[2*index],st[2*index+1]);
+};
+auto propogate=[&](int start,int end,int index){
+    if(start==end) {
+        lazy[index]=0;
+        return;
+    }
+    lazy[2*index]+=lazy[index];
+    lazy[2*index+1]+=lazy[index];
+    lazy[index]=0;
+    return;
+};
+function<void(int,int,int,int,int,int)> update=[&](int start,int end,int index,int l,int r,int val)->void{
+    if(lazy[index]){
+        st[index]+=(end-start+1)*lazy[index];
+        propogate(start,end,index);
+    }
+    if(l>end||r<start) return;
+    if(start>=l&&end<=r){
+        lazy[index]=val;
+        st[index]+=(end-start+1)*lazy[index];
+        propogate(start,end,index);
+        return;
+    }
+        int mid=(start+end)/2;
+        update(start,mid,2*index,l,r,val);
+        update(mid+1,end,2*index+1,l,r,val);
+        st[index]=merge(st[2*index],st[2*index+1]);
+    };
+    function<int(int,int,int,int)> query=[&](int start,int end,int index,int k)->int{
+        if(lazy[index]){
+            st[index]+=(end-start+1)*lazy[index];
+            propogate(start,end,index);
+        }
+        if(start==end) return st[index];
+        int mid=(start+end)/2;
+        if(mid>=k) return query(start,mid,2*index,k);
+        else return query(mid+1,end,2*index+1,k);
+    };
+    build(0,n-1,1);
+
+
+struct FenwickTree
+{
+    int n;
+    vector<long long> bit;
+ 
+    FenwickTree(vector<long long> &v) : n((int)v.size()), bit(n + 1)
+    {
+        for (int i = 0; i < n; i++)
+            update(i, v[i]);
+    }
+ 
+    void update(int i, long long x)
+    {
+        for (++i; i <= n; i += i & -i)
+            bit[i] += x;
+    }
+ 
+    long long sum(int i)
+    {
+        long long s = 0;
+        for (++i; i > 0; i -= i & -i) s += bit[i];
+        return s;
+    }
+ 
+    long long query(int l,int r){
+        return sum(r)-sum(l-1);
+    }
+};
+
+//Binomial coefficient
+const int N = 1e6 + 1;
+vector<int> fact(N,1);
+vector<int> inv_fact(N,1);
+void factorial(){
+    for(int i=2;i<N;i++){
+        fact[i]=(fact[i-1]*i)%MOD;
+    }
+}
+void invFactorial(){
+    inv_fact[N-1]=MOD_INV(fact[N-1]);
+    for(int i=N-2;i>=0;i--){
+        inv_fact[i]=(inv_fact[i+1]*(i+1))%MOD;
+    }
+}
+int nCr(int n,int r,int mod){
+    return (((fact[n]*inv_fact[n-r])%mod)*inv_fact[r])%mod;
+}
+
+
+//Binary lifting
+// Depth First Search
+void dfs(int node, vector<vector<int> >& graph,
+        vector<vector<int> >& ancestor, int parent)
+{
+    ancestor[node][0] = parent;
+    for (int neighbor : graph[node]) {
+        dfs(neighbor, graph, ancestor, node);
+    }
+}
+
+// Method to initialize ancestor table
+void preprocess(vector<vector<int> >& graph,
+                vector<vector<int> >& ancestor, int V,
+                int maxN)
+{
+    dfs(1, graph, ancestor, -1);
+    for (int j = 1; j < maxN; j++) {
+        for (int i = 1; i <= V; i++) {
+            if (ancestor[i][j - 1] != -1)
+                ancestor[i][j]
+                    = ancestor[ancestor[i][j - 1]][j - 1];
+        }
+    }
+}
+
+// Method to find Kth ancestor of node
+int findKthAncestor(vector<vector<int> >& ancestor,
+                    int node, int K, int maxN)
+{
+    for (int i = maxN - 1; i >= 0; i--) {
+        if (K & (1 << i)) {
+            if (ancestor[node][i] == -1)
+                return -1;
+            node = ancestor[node][i];
+        }
+    }
+    return node;
+}

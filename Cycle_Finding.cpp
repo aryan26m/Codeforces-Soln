@@ -19,9 +19,8 @@ void solve() {
     }
 
     dis[1] = 0;
-    int x = -1; // will store vertex involved in last relaxation
-
-    for (int i = 1; i <= n; i++) {
+    int x = -1; 
+    for (int i = 1; i <= m; i++) {
         x = -1;
         for (int u = 1; u <= n; u++) {
             for (auto edge : adj[u]) {
@@ -30,7 +29,7 @@ void solve() {
                 if (dis[u] + w < dis[v]) {
                     dis[v] = dis[u] + w;
                     parent[v] = u;
-                    x = v; // store last updated vertex
+                    x = v;
                 }
             }
         }

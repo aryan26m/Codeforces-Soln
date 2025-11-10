@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-
+ 
 #ifndef ONLINE_JUDGE
 void _print(long long t) { cerr << t; }
 void _print(int t) { cerr << t; }
@@ -29,7 +29,7 @@ template <class K, class V> void _print(const map<K, V> &m) { cerr << '{'; bool 
 #define fast ios::sync_with_stdio(false); cin.tie(0);
 const int MOD = 1e9 + 7;
 const int INF = 1e18;
-
+ 
 // Input array
 vi enterv(int n) {
     vi a(n);
@@ -43,7 +43,7 @@ vvi enterv2D(int n, int m) {
  for (int &x : a[i]) cin >> x;
  return a;
 }
-
+ 
 // Debug print
 void printArray(const vi &a) {
     for (int x : a) cout << x << ' ';
@@ -57,13 +57,13 @@ void print2DArray(const vvi &matrix) {
         cout << '\n';
     }
 }
-
+ 
 // GCD
 int gcd(int a, int b) {
     if (b == 0) return a;
     return gcd(b, a % b);
 }
-
+ 
 // Prime check
 bool isPrime(int n) {
     if (n < 2) return false;
@@ -74,7 +74,7 @@ bool isPrime(int n) {
     }
     return true;
 }
-
+ 
 // Binary Search
 bool binarySearch(const vi &a, int target) {
     int low = 0, high = a.size() - 1;
@@ -86,7 +86,7 @@ bool binarySearch(const vi &a, int target) {
     }
     return false;
 }
-
+ 
 // nCr using Fermat's Little Theorem
 int power(int x, int y, int p) {
     int res = 1;
@@ -98,11 +98,11 @@ int power(int x, int y, int p) {
     }
     return res;
 }
-
+ 
 int modInverse(int n, int p) {
     return power(n, p - 2, p);
 }
-
+ 
 int nCr(int n, int r, int p = MOD) {
     if (r > n || r < 0) return 0;
     static vector<int> fact(1, 1);
@@ -110,12 +110,12 @@ int nCr(int n, int r, int p = MOD) {
         fact.push_back(fact.back() * fact.size() % p);
     return fact[n] * modInverse(fact[r], p) % p * modInverse(fact[n - r], p) % p;
 }
-
+ 
 // Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
 }
-
+ 
 // Frequency Map Update
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
@@ -125,6 +125,8 @@ void push(map<int, int> &mp, int k, int v) {
 int n,m;
 vector<vector<pair<int,int>>> adj;
 vector<vector<int>> rev;
+// vector<bool> cmp;
+// vector<bool> cmp2;
 vector<bool> vis;
 vector<bool> vis2;
 vector<int> dis;
@@ -140,7 +142,7 @@ void dfs(int node){
         }
     }
 }
-
+ 
 void dfs2(int node){
     // debug(node);
     if(node==1){
@@ -154,8 +156,8 @@ void dfs2(int node){
         }
     }
 }
-
-
+ 
+ 
 void solve() {
     cin>>n>>m;
     adj.resize(n+3);
@@ -182,14 +184,14 @@ return;
     }
     dis[1]=0;
     vector<int> pr;
-    for(int i=1;i<=n+2;i++){
-        for(int i=1;i<=n;i++){
-            //x1(i)----->x2 with weight w
-            for(auto &node : adj[i]){
+    for(int i=1;i<=m;i++){
+        //x1(i)----->x2 with weight w
+        for(int j=1;j<=n;j++){
+            for(auto &node : adj[j]){
                 int x2=node.F;
                 int w=node.S;
-                if(dis[x2]>dis[i]+w){
-                    dis[x2]=dis[i]+w;
+                if(dis[x2]>dis[j]+w){
+                    dis[x2]=dis[j]+w;
                 }
             }
         }
@@ -198,7 +200,6 @@ return;
         }
     }
     set<int> st;
-    
     for(int i=1;i<=n;i++){
         if(dis[i]!=pr[i]){
             st.insert(i);
@@ -207,8 +208,7 @@ return;
     
     dfs(1);
     dfs2(n);
-    debug(vis);
-   
+  
    bool check=false;
     for(auto x : st){
         if((vis[x] && vis2[x]) && vis[n]==true){
@@ -221,6 +221,7 @@ return;
     else{
         cout<<(-1*dis[n])<<endl;
     }
+
 }
 int32_t main() {
     fast;

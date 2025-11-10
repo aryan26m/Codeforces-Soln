@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-
 #ifndef ONLINE_JUDGE
 void _print(long long t) { cerr << t; }
 void _print(int t) { cerr << t; }
@@ -22,8 +21,9 @@ template <class K, class V> void _print(const map<K, V> &m) { cerr << '{'; bool 
 #endif
 #define int long long
 #define pb push_back
-#define aint(x) (x).begin(), (x).end()
+#define all(x) (x).begin(), (x).end()
 #define vi vector<int>
+#define vvi vector<vector<int>>
 #define pii pair<int,int>
 #define rep(i, a, b) for(int i = a; i < b; ++i)
 #define fast ios::sync_with_stdio(false); cin.tie(0);
@@ -36,11 +36,26 @@ vi enterv(int n) {
     for (int &x : a) cin >> x;
     return a;
 }
+// Input array
+vvi enterv2D(int n, int m) {
+   vvi a(n, vi(m));
+  for (int i = 0; i < n; ++i)
+ for (int &x : a[i]) cin >> x;
+ return a;
+}
 
 // Debug print
 void printArray(const vi &a) {
     for (int x : a) cout << x << ' ';
     cout << '\n';
+}
+void print2DArray(const vvi &matrix) {
+    for (const auto &row : matrix) {
+        for (int val : row) {
+            cout << val << ' ';
+        }
+        cout << '\n';
+    }
 }
 
 // GCD
@@ -105,58 +120,45 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-vector<int> segtree;
-void build(vector<int>&v,int start, int end ,int index){//build segement tree
-    if(start==end){
-        segtree[index]=v[start];
-        return;
+
+// Union-Find (Disjoint Set Union)
+struct UnionFind {
+    int n, set_size, *parent, *rank;
+    UnionFind() {}
+    UnionFind(int a) {
+        n = set_size = a;
+        parent = new int[n + 1];
+        rank = new int[n + 1];
+        for (int i = 1; i <= n; i++) parent[i] = i, rank[i] = 1;
     }
-    int mid=(start+end)/2;
-    int left=index*2;
-    int right=(index*2)+1;
-    build(v,start,mid,left);
-    build(v,mid+1,end,right);
-    segtree[index]=segtree[left]+segtree[right];
-}
-void update(vector<int> &v,int start,int end,int index,int pos,int value){//update at a point in segment tree
-if(start==end){
-    v[pos]=value;
-    segtree[index]=value;
-    return;
-}
-int mid=(start+end)/2;
-if(mid>=pos){
-    update(v,start,mid,2*index,pos,value);
-}
-else{
-    update(v,mid+1,end,(2*index)+1,pos,value);
-}
-segtree[index]=segtree[2*index]+segtree[(2*index)+1];
-}
-int query(int start,int end,int index,int l ,int r){//give sum from  l to r
-    //compllete overlapp 
-    //left .... start .... end  .... right;
-    if(start>=l && end<=r){
-        return segtree[index];
+    int find(int x) {
+        if (x != parent[x]) return parent[x] = find(parent[x]);
+        return x;
     }
-    if(l>end || r<start){
-        return 0;
+    void merge(int x, int y) {
+        int xcur = find(x), ycur = find(y);
+        if (xcur == ycur) return;
+        if (rank[xcur] >= rank[ycur]) {
+            parent[ycur] = xcur;
+            rank[xcur] += rank[ycur];
+        } else {
+            parent[xcur] = ycur;
+            rank[ycur] += rank[xcur];
+        }
+        set_size--;
     }
-    int mid=(start+end)/2;
-    int leftans=query(start,mid,2*index,l,r);
-    int rightans=query(mid+1,end,(2*index)+1,l,r);
-       return leftans+rightans;
-}
+    void reset() {
+        set_size = n;
+        for (int i = 1; i <= n; i++) parent[i] = i, rank[i] = 1;
+    }
+    int size() { return set_size; }
+    void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
+};
+
 // Solve Function
 void solve() {
     // Write your logic here
-    int n;
-    cin>>n;
-    segtree.resize((4 * n - 1),-1);
-    vi v=enterv(n);
-    build(v,0,n-1,1);
-    // update(v,0,n-1,1,1,3);
-    debug(segtree);
+    
 }
 
 int32_t main() {

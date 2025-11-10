@@ -120,56 +120,53 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-#define S second
-#define F first
-using state=pair<int,int>;
+
+// Union-Find (Disjoint Set Union)
+struct UnionFind {
+    int n, set_size, *parent, *rank;
+    UnionFind() {}
+    UnionFind(int a) {
+        n = set_size = a;
+        parent = new int[n + 1];
+        rank = new int[n + 1];
+        for (int i = 1; i <= n; i++) parent[i] = i, rank[i] = 1;
+    }
+    int find(int x) {
+        if (x != parent[x]) return parent[x] = find(parent[x]);
+        return x;
+    }
+    void merge(int x, int y) {
+        int xcur = find(x), ycur = find(y);
+        if (xcur == ycur) return;
+        if (rank[xcur] >= rank[ycur]) {
+            parent[ycur] = xcur;
+            rank[xcur] += rank[ycur];
+        } else {
+            parent[xcur] = ycur;
+            rank[ycur] += rank[xcur];
+        }
+        set_size--;
+    }
+    void reset() {
+        set_size = n;
+        for (int i = 1; i <= n; i++) parent[i] = i, rank[i] = 1;
+    }
+    int size() { return set_size; }
+    void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
+};
+
 // Solve Function
 void solve() {
     // Write your logic here
-    int n,m;
-    cin>>n>>m;
-    vector<vector<state>> g(n+1);
-    vector<state> path(n+1,{0,0});
-
-    for(int i=0;i<m;i++){
-        int u,v,w;
-         cin>>u>>v>>w;
-         g[u].pb({v,w});
-    }
-    vector <int> dis(n+1,1e18);
-    vector<int> dp(n+1,0);
-    dp[1]=1;
-    path[1]={1,1};
-    priority_queue<state, vector<state>, greater<state>> pq;
-    pq.push({0,1});
-    dis[1]=0;    
-    while (!pq.empty())
-    {
-        auto p=pq.top();
-        pq.pop();
-        int d = p.F;
-        int node = p.S;
-        if (d > dis[node]) continue;
-        for(auto v : g[node]){
-            if(dis[v.F]>dis[node]+v.S){
-                dis[v.F]=dis[node]+v.S;
-                pq.push({dis[v.F],v.F});
-                dp[v.F]=dp[node];
-                path[v.F].F=path[node].F+1;
-                path[v.F].S=path[node].S+1;
-            }
-            else if(dis[v.F]==dis[node]+v.S){
-                dp[v.F]=(dp[v.F]+dp[node])%MOD;
-                path[v.F].F=min(path[v.F].F,path[node].F+1);
-                path[v.F].S=max(path[v.F].S,path[node].S+1);
-            }
-        }
-    }
-    cout<<dis[n]<<" "<<dp[n]<<" "<<path[n].F-1<<" "<<path[n].S-1;
+    int n;
+    UnionFind uf(n);
+    
 }
 
 int32_t main() {
     fast;
- solve();
+    int t = 1;
+    cin >> t;
+    while (t--) solve();
     return 0;
 }

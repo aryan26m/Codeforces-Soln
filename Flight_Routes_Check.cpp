@@ -120,98 +120,88 @@ bool comp(int a, int b) {
 void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
-vector<vector<int>> g;
-vector<vector<int>> invg;
-vector<bool> vis;
-vector<int> order;
-vector<int> scc_num;
-void dfs(int node){
-    vis[node]=1;
-    for(int x:g[node]){
-          if(vis[x]==0){
-            dfs(x);
-          }
-    }
-    order.pb(node);
-}
-void dfs2(int node,int sc){
-     scc_num[node]=sc;
-      vis[node]=1;
-    for(int x:invg[node]){
-          if(vis[x]==0){
-            dfs2(x,sc);
-          }
-    }
-}
 
+// Solve Function
 void solve() {
-    // Write your logic here
-    int n,m;
-    cin>>n>>m;
-    vis.assign(n+1,0);
-    g.resize(n+1);
-    invg.resize(n+1);
-    vis.resize(n+1);
-    scc_num.resize(n+1);
-    for(int i=0;i<m;i++){
-        int u,v;
-        cin>>u>>v;
-        g[u].pb(v);
-        invg[v].pb(u);
-    }
-    for(int i=1;i<=n;i++){
-        if(!vis[i]){
-            dfs(i);
+    int n, w;
+    cin >> n >> w;
+    int m = 1 << n;
+    int l = m - w;
+    int k = 0;
+    while ((1LL << (k + 1)) <= l + 1) ++k;
+    int t = 1 << k;
+
+    vector<int> sml, big, v;
+    sml.reserve(max(0LL, w - 1));
+    big.reserve(max(0LL, m - w));
+    v.reserve(m);
+
+    for (int x = 1; x < w; ++x) sml.pb(x);
+    for (int x = w + 1; x <= m; ++x) big.pb(x);
+
+    v.pb(w);
+    int tke = min((int)big.size(), t - 1);
+    for (int i = 0; i < tke; ++i) v.pb(big[i]);
+    int bi = tke;
+
+    int fill = min(t, m - (int)v.size());
+    for (int i = 0; i < fill; ++i) {
+        if (!sml.empty()) {
+            v.pb(sml.back());
+            sml.pop_back();
+        } else if (bi < (int)big.size()) {
+            v.pb(big[bi++]);
         }
     }
-    reverse(order.begin(),order.end());
-    vis.assign(n+1,0);
-    int sc=0;
-    for(int i=0;i<order.size();i++){
-        if(!vis[order[i]]){
-            sc++; 
-            dfs2(order[i],sc);
-        }
+    while (!sml.empty() && (int)v.size() < m) {
+        v.pb(sml.back());
+        sml.pop_back();
     }
-  if (sc == 1) {
-    cout << "YES" << endl;
-} else {
-    cout << "NO" << endl;
-    // Find two nodes from different SCCs
-    int a = -1, b = -1;
-    for (int i = 1; i <= n; ++i) {
-        for (int j = 1; j <= n; ++j) {
-            if (scc_num[i] != scc_num[j]) {
-                a = i;
-                b = j;
-                break;
+    while (bi < (int)big.size() && (int)v.size() < m) {
+        v.pb(big[bi++]);
+    }
+
+    int sz = 2 * m;
+    vector<int> a(sz, 0);
+    vector<char> hasw(sz, 0);
+    for (int i = 0; i < m; ++i) {
+        a[m + i] = v[i];
+        hasw[m + i] = (v[i] == w);
+    }
+    for (int i = m - 1; i >= 1; --i) {
+        int l = 2 * i, r = 2 * i + 1;
+        int vl = a[l], vr = a[r];
+        bool hwL = hasw[l], hwR = hasw[r];
+        hasw[i] = hwL | hwR;
+        if (!hasw[i]) {
+            a[i] = min(vl, vr);
+        } else {
+            int vw, vo;
+            if (hwL) {
+            vw = vl;
+            vo = vr;
+            } else {
+            vw = vr;
+            vo = vl;
+            }
+            if (vo < w) {
+            a[i] = max(vl, vr);
+            } else {
+            a[i] = min(vl, vr);
             }
         }
-        if (a != -1) break;
     }
-
-    vis.assign(n + 1, 0);
-    function<void(int)> dfs_check = [&](int u) {
-        vis[u] = true;
-        for (int v : g[u]) {
-            if (!vis[v]) dfs_check(v);
-        }
-    };
-    dfs_check(a);
-
-    if (vis[b]) {
-        cout << b << " " << a << endl; 
-    } else {
-        cout << a << " " << b << endl; 
+    for (int i = 1; i < sz; ++i) {
+        if (i > 1) cout << ' ';
+        cout << a[i];
     }
+    cout << endl;
 }
-}
-    
 
 int32_t main() {
     fast;
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) solve();
     return 0;
 }
