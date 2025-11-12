@@ -154,36 +154,81 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
-
+int n;
+vvi g;
+vi parent;
+vi depth;
+vi visit;
+void dfs(int node,int par ,int dep){
+    depth[node]=dep;
+    for(int x:g[node]){
+if(x!=par){
+    dfs(x,node,dep+1);
+}
+    }
+}
+void bfs(int node, int par, vector<int> &dis) {
+    queue<int> q;
+    q.push(node);
+    dis[node] = 0;
+    visit[node] = 1;
+    while (!q.empty()) {
+        int x = q.front();
+        q.pop();
+        for (int p : g[x]) {
+            if (!visit[p]) {
+                dis[p] = dis[x] + 1;
+                visit[p] = 1;
+                q.push(p);
+            }
+        }
+    }
+}
 // Solve Function
 void solve() {
     // Write your logic here
-    int n;
     cin>>n;
-    vector<int> arr(n);
-    vector<int> idx(n+1);
-    for(int i=0;i<n;i++){
-        cin>>arr[i];
-        idx[arr[i]]=i+1;
+    g.resize(n+1);
+    parent.resize(n+1);
+    depth.resize(n+1);
+    visit.assign(n+1,0);
+for(int i=0;i<n-1;i++){
+    int a,b;
+    cin>>a>>b;
+    g[a].pb(b);
+    g[b].pb(a);
+}
+dfs(1,0,0);
+int maxidep=1;
+for(int j=2;j<=n;j++){
+    if(depth[j]>depth[maxidep]){
+        maxidep=j;
     }
-    string s;
-    cin>>s;
-    if(s[0]=='1'||s[n-1]=='1'||s[idx[1]-1]=='1'||s[idx[n]-1]=='1'){
-        cout<<"-1"<<endl;
-        return;
+}
+vector<int> dis1(n+1,0);
+vector<int> dis2(n+1,0);
+vector<int> ans(n+1,0);
+bfs(maxidep,0,dis1);
+int maxidep2=1;
+for(int i=2;i<=n;i++){
+    if(dis1[i]>dis1[maxidep2]){
+        maxidep2=i;
     }
-    cout<<5<<endl;
-    cout<<min(idx[1],idx[n])<<" "<<max(idx[1],idx[n])<<endl;
-    cout<<1<<" "<<idx[1]<<endl;
-    cout<<1<<" "<<idx[n]<<endl;
-    cout<<idx[1]<<" "<<n<<endl;
-    cout<<idx[n]<<" "<<n<<endl;
+}
+visit.assign(n+1,0);
+bfs(maxidep2,0,dis2);
+for(int i=1;i<=n;i++){
+    ans[i]=max(dis1[i],dis2[i]);
+}
+for(int i=1;i<=n;i++){
+ cout<<ans[i]<<" ";
+}
+cout<<endl;
+
 }
 
 int32_t main() {
     fast;
-    int t = 1;
-    cin >> t;
-    while (t--) solve();
+   solve();
     return 0;
 }

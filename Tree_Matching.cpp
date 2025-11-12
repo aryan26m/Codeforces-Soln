@@ -26,30 +26,30 @@ template <class K, class V> void _print(const map<K, V> &m) { cerr << '{'; bool 
 #define vvi vector<vector<int>>
 #define pii pair<int,int>
 #define rep(i, a, b) for(int i = a; i < b; ++i)
-#define fast ios::sync_with_stdio(false); cin.tie(0);
+#define fst ios::sync_with_stdio(false); cin.tie(0);
 const int MOD = 1e9 + 7;
 const int INF = 1e18;
 
 // Input array
 vi enterv(int n) {
-    vi a(n);
-    for (int &x : a) cin >> x;
-    return a;
+    vi arr(n);
+    for (int &x : arr) cin >> x;
+    return arr;
 }
-// Input array
+// Input 2D array
 vvi enterv2D(int n, int m) {
-   vvi a(n, vi(m));
-  for (int i = 0; i < n; ++i)
- for (int &x : a[i]) cin >> x;
- return a;
+    vvi arr(n, vi(m));
+    for (int i = 0; i < n; ++i)
+        for (int &x : arr[i]) cin >> x;
+    return arr;
 }
 
 // Debug print
-void printArray(const vi &a) {
-    for (int x : a) cout << x << ' ';
+void printArry(const vi &arr) {
+    for (int x : arr) cout << x << ' ';
     cout << '\n';
 }
-void print2DArray(const vvi &matrix) {
+void print2DArry(const vvi &matrix) {
     for (const auto &row : matrix) {
         for (int val : row) {
             cout << val << ' ';
@@ -76,18 +76,18 @@ bool isPrime(int n) {
 }
 
 // Binary Search
-bool binarySearch(const vi &a, int target) {
-    int low = 0, high = a.size() - 1;
+bool binrySerch(const vi &arr, int target) {
+    int low = 0, high = arr.size() - 1;
     while (low <= high) {
         int mid = (low + high) / 2;
-        if (a[mid] == target) return true;
-        if (a[mid] < target) low = mid + 1;
+        if (arr[mid] == target) return true;
+        if (arr[mid] < target) low = mid + 1;
         else high = mid - 1;
     }
     return false;
 }
 
-// nCr using Fermat's Little Theorem
+// nCr using Fermt's Little Theorem
 int power(int x, int y, int p) {
     int res = 1;
     x %= p;
@@ -105,10 +105,10 @@ int modInverse(int n, int p) {
 
 int nCr(int n, int r, int p = MOD) {
     if (r > n || r < 0) return 0;
-    static vector<int> fact(1, 1);
-    while ((int)fact.size() <= n)
-        fact.push_back(fact.back() * fact.size() % p);
-    return fact[n] * modInverse(fact[r], p) % p * modInverse(fact[n - r], p) % p;
+    static vector<int> fct(1, 1);
+    while ((int)fct.size() <= n)
+        fct.push_back(fct.back() * fct.size() % p);
+    return fct[n] * modInverse(fct[r], p) % p * modInverse(fct[n - r], p) % p;
 }
 
 // Comparator (Descending Order)
@@ -125,8 +125,8 @@ void push(map<int, int> &mp, int k, int v) {
 struct UnionFind {
     int n, set_size, *parent, *rank;
     UnionFind() {}
-    UnionFind(int a) {
-        n = set_size = a;
+    UnionFind(int _n) {
+        n = set_size = _n;
         parent = new int[n + 1];
         rank = new int[n + 1];
         for (int i = 1; i <= n; i++) parent[i] = i, rank[i] = 1;
@@ -154,19 +154,36 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
-
-// Solve Function
+vector<vector<int>> g;
+vector<int> subtree;
+void dfs(int node,int par){
+    subtree[node]=1;
+    for(int x:g[node]){
+        if(x!=par){
+            dfs(x,node);
+            subtree[node]+=subtree[x];
+        }
+    }
+}
 void solve() {
-    // Write your logic here
     int n;
     cin>>n;
-    
+    g.resize(n+1);
+    for(int i=0;i<n-1;i++){
+        int a,b;
+        cin>>a>>b;
+        g[a].pb(b);
+        g[b].pb(a);
+    }
+    subtree.assign(n+1,0);
+    dfs(1,0);
+    debug(subtree);
+    int ans=subtree[1]/2;
+    cout<<ans;
 }
 
 int32_t main() {
-    fast;
-    int t = 1;
-    cin >> t;
-    while (t--) solve();
+    fst;
+   solve();
     return 0;
 }

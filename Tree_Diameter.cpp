@@ -154,36 +154,48 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
-
-// Solve Function
+int n;
+vvi g;
+vi parent;
+vi depth;
+void dfs(int node,int par,int dep){
+    depth[node]=dep;
+    parent[node]=par;
+    for(int x:g[node]){
+        if(x!=par){
+            dfs(x,node,dep+1);
+        }
+    }
+}
 void solve() {
-    // Write your logic here
-    int n;
     cin>>n;
-    vector<int> arr(n);
-    vector<int> idx(n+1);
-    for(int i=0;i<n;i++){
-        cin>>arr[i];
-        idx[arr[i]]=i+1;
+    g.resize(n+1);
+    parent.resize(n+1);
+    depth.resize(n+1);
+    for(int i=0;i<n-1;i++){
+        int a,b;
+        cin>>a>>b;
+        g[a].pb(b);
+        g[b].pb(a);
     }
-    string s;
-    cin>>s;
-    if(s[0]=='1'||s[n-1]=='1'||s[idx[1]-1]=='1'||s[idx[n]-1]=='1'){
-        cout<<"-1"<<endl;
-        return;
+    dfs(1,0,0);
+    // debug(depth);
+    int maxideep=1;
+    for(int j=2;j<=n;j++){
+        if(depth[j]>depth[maxideep]){
+            maxideep=j;
+        }
     }
-    cout<<5<<endl;
-    cout<<min(idx[1],idx[n])<<" "<<max(idx[1],idx[n])<<endl;
-    cout<<1<<" "<<idx[1]<<endl;
-    cout<<1<<" "<<idx[n]<<endl;
-    cout<<idx[1]<<" "<<n<<endl;
-    cout<<idx[n]<<" "<<n<<endl;
+    dfs(maxideep,0,0);
+    int ans=0;
+    for(int i=1;i<=n;i++){
+        ans=max(ans,depth[i]);
+    }
+    cout<<ans<<endl;
 }
 
 int32_t main() {
     fast;
-    int t = 1;
-    cin >> t;
-    while (t--) solve();
+    solve();
     return 0;
 }
