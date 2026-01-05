@@ -27,9 +27,8 @@ template <class K, class V> void _print(const map<K, V> &m) { cerr << '{'; bool 
 #define pii pair<int,int>
 #define rep(i, a, b) for(int i = a; i < b; ++i)
 #define fast ios::sync_with_stdio(false); cin.tie(0);
-// const int MOD = 1e9 + 7;
+const int MOD = 1e9 + 7;
 const int INF = 1e18;
-const int MOD = 998244353;
 
 // Input array
 vi enterv(int n) {
@@ -111,7 +110,7 @@ int nCr(int n, int r, int p = MOD) {
         fact.push_back(fact.back() * fact.size() % p);
     return fact[n] * modInverse(fact[r], p) % p * modInverse(fact[n - r], p) % p;
 }
- 
+
 // Comparator (Descending Order)
 bool comp(int a, int b) {
     return a > b;
@@ -156,64 +155,162 @@ struct UnionFind {
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
 
-int modpow(int a,int e) {
-    int r = 1 % MOD;
-    a %= MOD;
-    while (e > 0) {
-        if (e & 1) r = (r * a) % MOD;
-        a = (a * a) % MOD;
-        e >>= 1;
+// Solve Function
+void solve() {
+    // Write your logic her
+    // int n;
+    // cin>>n;
+    // vi v=enterv(n);
+    //  for(int i=0;i<(1<<n);i++){
+    //     cout<<i<<": ";
+    //      for(int j=0;j<n;j++){
+    //          if((i>>j)&1){
+    //             cout<<v[j]<<" ,";
+    //          }
+    //    }
+    //      cout<<endl;
+    //  }
+    // int n=12;
+    // //1100
+    // bitset <4> b1(n);
+    // cout<<b1.to_string()<<endl;
+// bit magic 1
+    // int q;
+    // cin>>q;
+    // int n=0;
+    // while (q--)
+    // {
+    //      int t;
+    //      cin>>t;
+    //      if(t==1){
+    //         int i;
+    //         cin>>i;
+    //         if((n>>i)&1){
+    //             cout<<1<<endl;
+    //         }
+    //         else{
+    //             cout<<0<<endl;
+    //         }
+    //      }
+    //      else if(t==2){
+    //         int i;
+    //         cin>>i;
+    //           n=(n|(1LL<<i));
+    //      }
+    //      else if(t==3){
+    //         int i;
+    //         cin>>i;
+    //         n=(n&(~(1LL<<i)));
+    //      }
+    //      else if(t==4){
+    //           int i;
+    //           cin>>i;
+    //           n=(n^(1LL<<i));
+    //      }
+    //      else{
+    //         bool on=false;
+    //         int sum=0;
+    //         int count=0;
+    //         for(int i=0;i<60;i++){
+    //             if((n>>i)&1){
+    //                 sum+=(1LL<<i);
+    //                 count++;
+    //                 on=true;
+    //             }
+    //         }
+    //         if(t==5){
+    //             if(count==60){
+    //              cout<<1<<endl;   
+    //             }
+    //             else{
+    //                 cout<<0<<endl;   
+    //             }
+    //         }
+    //         else if(t==6){
+    //              if(on){
+    //              cout<<1<<endl;   
+    //             }
+    //             else{
+    //                 cout<<0<<endl;   
+    //             }
+    //         }
+    //         else if(t==7){
+    //              if(on==false){
+    //              cout<<1<<endl;   
+    //             }
+    //             else{
+    //                 cout<<0<<endl;   
+    //             }
+    //         }
+    //         else if(t==8){
+    //              cout<<count<<endl;   
+    //         }
+    //         else{
+    //             cout<<sum<<endl;
+    //         }
+    //      }
+    // }
+
+
+    //bit magic 2
+    int n;
+    cin>>n;
+    bitset<64> b1(n);
+    cout<<b1<<endl;
+   int left=-1;
+   int right=-1;
+   int cnt=0;
+   int bigpow=-1;
+   int bigno=2;
+   for(int i=63;i>=0;i--){
+    if(b1[i]==1 && (n==(1LL<<i))){
+        cnt=i;
     }
-    return r;
+    if((bigpow==-1) && n!=0 && (n%(1LL<<i)==0)){
+        bigpow=i;
+    }
+    if(b1[i]==1){
+        if(right==-1) {right=i;}
+        left=i;
+    }
+    if(i>0){
+        if((1LL<<i)>=n){
+            bigno=(1LL<<i);
+        }
+    }
+
+   }
+
+   cout<<right<<endl;
+   cout<<left<<endl;
+   if(cnt){
+    cout<<1<<endl;
 }
+else{
+       cout<<0<<endl;
 
-// Precomputed faccti and inverse faccti for fast falling faccti
-vector<int> faccti, infac;
+   }
+   if(bigpow==-1){
+    cout<<-1<<endl;
+   }
+   else{
 
-void precompute_fac(int up_to) {
-    faccti.assign(up_to + 1, 0);
-    infac.assign(up_to + 1, 0);
-    faccti[0] = 1;
-    for (int i = 1; i <= up_to; ++i) faccti[i] = faccti[i - 1] * i % MOD;
-    infac[up_to] = modpow(faccti[up_to], MOD - 2);
-    for (int i = up_to - 1; i >= 0; --i) infac[i] = infac[i + 1] * (i + 1) % MOD;
-}
+       cout<<(1LL<<bigpow)<<endl;
+   }
+    cout<<bigno<<endl;
 
-int fact(int K, int d) {
-    if (d < 0 || d > K) return 0;
-    return faccti[K] * infac[K - d] % MOD; 
-}
-
-void solve(int n, int k) {
-    int cnt = min(n-1,k);
-    int sum = 0;
-    for (int d=1;d<=cnt;d++) {
-        int factorial = fact(k, d);  
-        int pow = modpow(k-d+1,n-d);
-        int ans = (factorial*pow)%MOD;
-        sum = (sum+ans) % MOD;
     }
-    int dst = 0;
-    if (k >= n) {
-        dst = fact(k, n);
-    }
-    int ans = (sum - (1LL * cnt * dst) % MOD + MOD) % MOD;
-    cout << ans << endl;
-    }
+    
 
-    signed main(){
+    int32_t main() {
     fast;
     int t;
-    cin >> t;
-    vector<pair<int,int>> inv;
-    inv.reserve(t);
-    int maxK = 0;
-    for (int i = 0; i < t; ++i) {
-        int n,k; cin >> n >> k;
-        inv.emplace_back(n,k);
-        if (k > maxK) maxK = k;
+    cin>>t;
+    while (t--)
+    {
+        solve();
+        /* code */
     }
-    if (maxK >= 0) precompute_fac(maxK);
-    for (auto &p : inv) solve(p.first, p.second);
+    
     return 0;
-    }
+}
