@@ -154,34 +154,67 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
-int leftMostBitShift(int n) {
-    if (n == 0) return 0;
-    int res = 1LL;
-    while (n >>= 1LL) res <<= 1LL;
-    return res;
-}
+
 // Solve Function
 void solve() {
     // Write your logic here
     int n;
     cin>>n;
     vi v=enterv(n);
-    map<int,int> st;
-    int ans=0;
-    for(int i=0;i<n;i++)
+
+int ans=0;
+    //sir code
+//     for(int j=0; j<31; j++)
+// {
+//     int cnt_0=0, cnt_1=0;
+
+//     for(int i=0; i<n; i++)
+//     {
+//         if(v[i]&(1<<j))
+//         {
+//             cnt_1++;
+//         }
+//         else
+//         {
+//             cnt_0++;
+//         }
+//     }
+//     debug(j);
+// debug(cnt_0);
+// debug(cnt_1);
+//     int pairs = cnt_0 * cnt_1;
+
+//     ans += pairs * (1<<j);
+// }
+// cout << ans;
+
+// find xor of all pair if i then trverse from j=i+1 and find sum of all v[i]^v[j]
+for(int j=0; j<31; j++)
+{
+    int cnt_0=0, cnt_1=0;
+
+    for(int i=0; i<n; i++)
     {
-        int leftmost(leftMostBitShift(v[i]));
-        if(st.find(leftmost)!=st.end()){
-            ans+=st[leftmost];
-            st[leftmost]++;
+        if((v[i]>>j)&1)
+        {
+            cnt_1++;
         }
-        else{
-            st[leftmost]=1;
+        else
+        {
+            cnt_0++;
         }
     }
-    cout<<ans<<endl;
+    if(cnt_0==0 || cnt_1==0){
+      continue;
+    }
+    else{
+        //   cout<<cnt_0<<" "<<cnt_1<<endl;
+        ans+=max(cnt_0,cnt_1)*(1<<j);
+    }
 }
-
+cout<<ans<<endl;
+}
+  
 int32_t main() {
     fast;
     int t = 1;

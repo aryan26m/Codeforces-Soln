@@ -154,38 +154,44 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
-int leftMostBitShift(int n) {
-    if (n == 0) return 0;
-    int res = 1LL;
-    while (n >>= 1LL) res <<= 1LL;
-    return res;
-}
-// Solve Function
 void solve() {
-    // Write your logic here
-    int n;
-    cin>>n;
-    vi v=enterv(n);
-    map<int,int> st;
-    int ans=0;
-    for(int i=0;i<n;i++)
-    {
-        int leftmost(leftMostBitShift(v[i]));
-        if(st.find(leftmost)!=st.end()){
-            ans+=st[leftmost];
-            st[leftmost]++;
-        }
-        else{
-            st[leftmost]=1;
-        }
+    int n, m, k;
+    cin >> n >> m >> k;
+
+    int ans = 1;
+
+    for (int i = k - 1; i >= 1; i--) {
+        int used = k - i;
+        if (2 * used - 1 > m) break;
+        int res = m - (2 * used - 1);
+        int ext;
+        if (res <= used) ext = res;
+        else ext = (res + used) / 2;
+        ext = min(ext, n - k);
+        ans = max(ans, used + ext + 1);
     }
-    cout<<ans<<endl;
+
+    for (int i = k + 1; i <= n; i++) {
+        int used = i - k;
+        if (2 * used - 1 > m) break;
+        int res = m - (2 * used - 1);
+        int ext;
+        if (res <= used) ext = res;
+        else ext = (res + used) / 2;
+        ext = min(ext, k - 1);
+        ans = max(ans, used + ext + 1);
+    }
+
+    cout << ans << endl;
 }
 
+
+
 int32_t main() {
-    fast;
-    int t = 1;
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int t;
     cin >> t;
-    while (t--) solve();
+    while(t--) solve();
     return 0;
 }

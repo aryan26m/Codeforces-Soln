@@ -154,32 +154,48 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
-int leftMostBitShift(int n) {
-    if (n == 0) return 0;
-    int res = 1LL;
-    while (n >>= 1LL) res <<= 1LL;
-    return res;
-}
-// Solve Function
+
 void solve() {
-    // Write your logic here
     int n;
-    cin>>n;
-    vi v=enterv(n);
-    map<int,int> st;
-    int ans=0;
-    for(int i=0;i<n;i++)
-    {
-        int leftmost(leftMostBitShift(v[i]));
-        if(st.find(leftmost)!=st.end()){
-            ans+=st[leftmost];
-            st[leftmost]++;
-        }
-        else{
-            st[leftmost]=1;
-        }
+    cin >> n;
+
+    vector<int> zeroone, onezero, oneone, zerozero;
+
+    for (int i = 0; i < n; i++) {
+        int x;
+        string s;
+        cin >> x >> s; 
+        if (s == "01") {
+            zeroone.pb(x);
+        } else if (s == "10") {
+            onezero.pb(x);
+        } else if (s == "11") {
+            oneone.pb(x);
+        } else if (s == "00") {
+            zerozero.pb(x);
+        } else {
+                }
     }
-    cout<<ans<<endl;
+
+    const int INF_COST = 100000000; // 1e8
+    zeroone.pb(INF_COST);
+    onezero.pb(INF_COST);
+    oneone.pb(INF_COST);
+
+    sort(all(zeroone));
+    sort(all(onezero));
+    sort(all(oneone));
+
+    int best_pair = onezero[0] + zeroone[0];
+    int best_single = oneone[0];
+int ans= min(best_pair, best_single);
+if(ans==100000000){
+cout<<-1<<endl;
+}
+else{
+
+    cout <<ans<< '\n';
+}
 }
 
 int32_t main() {

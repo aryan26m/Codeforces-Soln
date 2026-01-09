@@ -154,34 +154,29 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
-int leftMostBitShift(int n) {
-    if (n == 0) return 0;
-    int res = 1LL;
-    while (n >>= 1LL) res <<= 1LL;
-    return res;
-}
+
 // Solve Function
 void solve() {
     // Write your logic here
     int n;
     cin>>n;
     vi v=enterv(n);
-    map<int,int> st;
+    int temp=0;
     int ans=0;
-    for(int i=0;i<n;i++)
-    {
-        int leftmost(leftMostBitShift(v[i]));
-        if(st.find(leftmost)!=st.end()){
-            ans+=st[leftmost];
-            st[leftmost]++;
-        }
-        else{
-            st[leftmost]=1;
-        }
+    for(int i=0;i<n;i++){
+        temp=temp^v[i];
     }
-    cout<<ans<<endl;
-}
+    for(int i=0;i<n;i++){
+        ans^=(temp^v[i]);
+    }
 
+    if(ans==0){
+        cout<<temp<<endl;
+    }
+    else{    
+         cout<<-1<<endl;
+    }
+}
 int32_t main() {
     fast;
     int t = 1;

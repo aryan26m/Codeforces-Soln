@@ -76,15 +76,15 @@ bool isPrime(int n) {
 }
 
 // Binary Search
-bool binarySearch(const vi &a, int target) {
+int binarySearch(const vi &a, int target) {
     int low = 0, high = a.size() - 1;
     while (low <= high) {
         int mid = (low + high) / 2;
-        if (a[mid] == target) return true;
+        if (a[mid] == target) return mid;
         if (a[mid] < target) low = mid + 1;
         else high = mid - 1;
     }
-    return false;
+    return -1;
 }
 
 // nCr using Fermat's Little Theorem
@@ -154,32 +154,24 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
-int leftMostBitShift(int n) {
-    if (n == 0) return 0;
-    int res = 1LL;
-    while (n >>= 1LL) res <<= 1LL;
-    return res;
-}
+
 // Solve Function
 void solve() {
-    // Write your logic here
-    int n;
-    cin>>n;
-    vi v=enterv(n);
-    map<int,int> st;
-    int ans=0;
-    for(int i=0;i<n;i++)
-    {
-        int leftmost(leftMostBitShift(v[i]));
-        if(st.find(leftmost)!=st.end()){
-            ans+=st[leftmost];
-            st[leftmost]++;
-        }
-        else{
-            st[leftmost]=1;
-        }
-    }
-    cout<<ans<<endl;
+int n,k;
+cin>>n>>k;
+vi v=enterv(n);
+vector<int> mp(n+5);
+for(int i=0;i<n;i++){
+    mp[v[i]]++;
+}
+
+int x=0;
+while (mp[x])
+{
+    x++;
+}
+x=min(x,k-1);
+cout<<x<<endl;
 }
 
 int32_t main() {
