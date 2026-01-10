@@ -160,22 +160,34 @@ void solve() {
     // Write your logic here
     int n,k;
     cin>>n>>k;
-     vi v=enterv(n);
-      int ans=0;
-    for(int i=29;i>=0;i--){
-        vector<int> arr;
-        int cnt=0;
-        for(int j=0;j<v.size();j++){
+    vi v=enterv(n);
+    int freq[31];
+    for(int i=0;i<31;i++){
+        freq[i]=0;
+        for(int j=0;j<n;j++){
             if((v[j]>>i)&1){
-                arr.pb(v[j]);
+                freq[i]++;
             }
         }
-        if(arr.size()>=k){
-            v=arr;
-            ans+=(1LL<<i);
+    }
+    
+    // for(int i=30;i>=0;i--){
+    // debug(freq[i]);
+    // }
+
+    int ans=0;
+    for(int i=30;i>=0;i--){
+        int req=n-freq[i];
+        if(req==0){
+            ans|=(1<<i);
+        }
+        else{
+            if(k>=req){
+                k-=req;
+                ans|=(1<<i);
+            }
         }
     }
-   
     cout<<ans<<endl;
 }
 

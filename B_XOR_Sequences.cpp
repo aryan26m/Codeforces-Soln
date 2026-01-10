@@ -158,25 +158,11 @@ struct UnionFind {
 // Solve Function
 void solve() {
     // Write your logic here
-    int n,k;
-    cin>>n>>k;
-     vi v=enterv(n);
-      int ans=0;
-    for(int i=29;i>=0;i--){
-        vector<int> arr;
-        int cnt=0;
-        for(int j=0;j<v.size();j++){
-            if((v[j]>>i)&1){
-                arr.pb(v[j]);
-            }
-        }
-        if(arr.size()>=k){
-            v=arr;
-            ans+=(1LL<<i);
-        }
+    int a,b;
+    cin>>a>>b;
+    for(int i=31;i>=0;i--){
+        if((a<<i)&1 || )
     }
-   
-    cout<<ans<<endl;
 }
 
 int32_t main() {

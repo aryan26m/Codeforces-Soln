@@ -154,29 +154,41 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
-
+int countbit(int n){
+    int totalbit=n+1;
+    int count=totalbit/(1<<1);
+    return count;
+}
 // Solve Function
 void solve() {
     // Write your logic here
-    int n,k;
-    cin>>n>>k;
-     vi v=enterv(n);
-      int ans=0;
-    for(int i=29;i>=0;i--){
-        vector<int> arr;
-        int cnt=0;
-        for(int j=0;j<v.size();j++){
-            if((v[j]>>i)&1){
-                arr.pb(v[j]);
-            }
+    int a,b,x,y;
+    cin>>a>>b>>x>>y;
+    int x1=countbit(a-1);
+    int x2=countbit(b);
+    int bit=x2-x1;
+    if(a>b){
+        if((a%2==1) && (a-1)==b){
+            cout<<y<<endl;
         }
-        if(arr.size()>=k){
-            v=arr;
-            ans+=(1LL<<i);
+        else{
+            cout<<-1<<endl;
         }
     }
-   
-    cout<<ans<<endl;
+    else{
+        int req=b-a;
+        if(y<x){
+            if(a%2==1){
+                bit--;
+            }
+            int ans1=bit*y;
+            int ans2=(req-bit)*x;
+            cout<<ans1+ans2<<endl;
+        }
+        else{
+            cout<<(b-a)*x<<endl;
+        }
+    }
 }
 
 int32_t main() {

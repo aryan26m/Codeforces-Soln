@@ -155,28 +155,56 @@ struct UnionFind {
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
 
+int pre[100001][31];
 // Solve Function
 void solve() {
     // Write your logic here
-    int n,k;
-    cin>>n>>k;
-     vi v=enterv(n);
-      int ans=0;
-    for(int i=29;i>=0;i--){
-        vector<int> arr;
-        int cnt=0;
-        for(int j=0;j<v.size();j++){
-            if((v[j]>>i)&1){
-                arr.pb(v[j]);
-            }
-        }
-        if(arr.size()>=k){
-            v=arr;
-            ans+=(1LL<<i);
+    int n;
+    cin>>n;
+    for(int i=0;i<=n;i++){
+        for(int j=0;j<31;j++){
+            pre[i][j]=0;
         }
     }
-   
-    cout<<ans<<endl;
+    for(int i=1;i<=n;i++){
+        int a;
+        cin>>a;
+        bitset<31> b1(a);
+        for(int j=0;j<31;j++){
+            pre[i][j]=b1[j];
+        }
+    }
+    for(int i=1;i<=n;i++){
+        for(int j=0;j<31;j++){
+            pre[i][j]+=pre[i-1][j];
+        }
+    }
+      int q;
+      cin>>q;
+      while (q--)
+      {
+          int l,r;
+          cin>>l>>r;
+          double total = (r-l+1.0)/2.0;
+          int ans1=0;
+          int ans2=0,ans3=0;
+          for(int i=0;i<31;i++){
+            int bit=pre[r][i]-pre[l-1][i];
+            if(bit < total){
+                ans1+=(1LL<<i);
+            }
+            if(bit!=(r-l+1)){
+                ans2+=(1LL<<i);
+            }
+            if(bit){
+                ans3+=(1LL<<i);
+            }
+          }
+          int ans=ans1+ans2+ans3;
+         cout<<ans<<endl;
+        }
+      
+
 }
 
 int32_t main() {

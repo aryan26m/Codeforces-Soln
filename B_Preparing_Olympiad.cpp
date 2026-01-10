@@ -155,34 +155,61 @@ struct UnionFind {
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
 
-// Solve Function
+bool checkerr(int sum,int atleast,int atmost,int maxdiff,int maxi,int  mini){
+    //   debug(maxi);
+    // debug(mini);
+    if(sum>atmost && sum<atleast){
+        return false;
+    }
+    // if(maxi==mini && sum!=maxi){
+    //     if((maxi-mini)>=maxdiff){
+    //         return true;
+    //     }
+    //     else{
+    //         return false;
+    //     }
+    // }
+    // if(maxi==mini && sum==maxi){
+    //   if(sum>=atleast && sum<=atmost){
+    //   return true;
+    //  }
+    //  else{
+    //  return false;
+    //  }
+    //  }
+    if((maxi-mini)>=maxdiff && sum>=atleast && sum<=atmost){
+        return true;
+    }
+  
+return false;
+};
 void solve() {
     // Write your logic here
-    int n,k;
-    cin>>n>>k;
-     vi v=enterv(n);
-      int ans=0;
-    for(int i=29;i>=0;i--){
-        vector<int> arr;
-        int cnt=0;
-        for(int j=0;j<v.size();j++){
-            if((v[j]>>i)&1){
-                arr.pb(v[j]);
+    int n,l,r,x;
+    cin>>n>>l>>r>>x;
+    vi v=enterv(n);
+    int ans=0;
+    for(int i=0;i<(1<<n);i++){
+       int sum=0;
+       int maxi=-1e18;
+       int mini=1e18;
+        for(int j=0;j<31;j++){
+            if((i>>j)&1){
+                maxi=max(maxi,v[j]);
+                mini=min(mini,v[j]);
+                sum+=v[j];
             }
         }
-        if(arr.size()>=k){
-            v=arr;
-            ans+=(1LL<<i);
-        }
-    }
+      if(checkerr(sum,l,r,x,maxi,mini)){
    
+        ans++;
+      }
+    }
     cout<<ans<<endl;
 }
 
 int32_t main() {
     fast;
-    int t = 1;
-    cin >> t;
-    while (t--) solve();
+  solve();
     return 0;
 }
