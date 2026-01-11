@@ -155,22 +155,38 @@ struct UnionFind {
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
 
-int leftMostBitIndex(int n) {
-    if (n == 0) return -1; // no bits set
-    return (int)log2(n);   // floor(log2(n)) gives MSB index
-}
-
-
 // Solve Function
 void solve() {
-    int a,b;
-    cin>>a>>b;
-     for (int i = 0; i < 30; i++) {
-            if ((a & (1 << i)) != (b & (1 << i))) {
-                cout << (1ll << i) << "\n";
-                break;
-            }
+    int n;
+    cin>>n;
+    vi v=enterv(n);
+    sort(v.begin(),v.end());
+    int ans=1;
+    int sum=1;
+    for(int i=1;i<n;i++){
+        for(int j=0;j<31;j++){
+             if((v[i]>>j)&1){
+                if((ans>>j)&1== 0){
+                    cout<<"NO"<<endl;
+                    return;                
+                }
+                else if(sum<v[i]){     
+                    cout<<"NO"<<endl;
+                    return;                
+             }
         }
+    }
+    sum+=v[i];
+ans|=(sum);
+}
+    if (n==1 && v[0]!=1)
+    {
+        cout<<"NO"<<endl;
+    }
+    else{
+        cout<<"YES"<<endl;
+    }
+
 }
 
 int32_t main() {
