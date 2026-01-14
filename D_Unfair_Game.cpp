@@ -154,45 +154,48 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
-unordered_set<int> visited;
+vector<vector<long long>> generateBinomial(int n) {
+    vector<vector<long long>> C(n+1, vector<long long>(n+1, 0));
 
-int dfs(int n, int k) {
-    if (n == k) return 0;
-    if (n < k || n <= 0) return -1;
-    if (visited.count(n)) return -1;
-    visited.insert(n);
-    if (n % 2 == 0) {
-        int res = dfs(n / 2, k);
-        if (res == -1) return -1;
-        return res + 1;
-    } 
-    else{
-        int x1 = n / 2;
-        int x2 = n / 2 + 1;
-        int res = -1;
-        if (x1 >= k)
-            res = dfs(x1, k);
-        if (res == -1 && x2 >= k)
-            res = dfs(x2, k);
-        if (res == -1) return -1;
-        return res + 1;
+    // Base cases
+    for (int i = 0; i <= n; i++) {
+        C[i][0] = 1;
+        C[i][i] = 1;
     }
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j < i; j++) {
+            C[i][j] = C[i-1][j-1] + C[i-1][j];
+        }
+    }
+
+    return C;
 }
 
+// Solve Function
 void solve() {
-    long long n, k;
+    int n,k;
     cin>>n>>k;
-    visited.clear();
-    cout << dfs(n, k) << endl;
-}
+    auto C = generateBinomial(32);
 
+     int mx =(31-__builtin_clz(n));
+
+int ans = 0;
+for(int msb = 0; msb < mx; msb++) {
+  for(int j = 0; j <= msb; j++) {
+     if(j*2+(msb-j) +1>k) break;
+ans += C[msb][j];
+  }
+}
+if(mx < k) ans++;
+
+cout << (n-ans) << "\n";
+    
+}
 
 int32_t main() {
     fast;
     int t = 1;
     cin >> t;
-    while (t--){
-        solve();
-    } 
+    while (t--) solve();
     return 0;
 }

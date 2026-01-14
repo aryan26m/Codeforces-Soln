@@ -154,45 +154,20 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
-unordered_set<int> visited;
 
-int dfs(int n, int k) {
-    if (n == k) return 0;
-    if (n < k || n <= 0) return -1;
-    if (visited.count(n)) return -1;
-    visited.insert(n);
-    if (n % 2 == 0) {
-        int res = dfs(n / 2, k);
-        if (res == -1) return -1;
-        return res + 1;
-    } 
-    else{
-        int x1 = n / 2;
-        int x2 = n / 2 + 1;
-        int res = -1;
-        if (x1 >= k)
-            res = dfs(x1, k);
-        if (res == -1 && x2 >= k)
-            res = dfs(x2, k);
-        if (res == -1) return -1;
-        return res + 1;
-    }
-}
-
+// Solve Function
 void solve() {
-    long long n, k;
+    // Write your logic here
+    int n,k;
     cin>>n>>k;
-    visited.clear();
-    cout << dfs(n, k) << endl;
+    k=min(k,30LL);
+    cout << min(n,(1LL<<k)-1) + 1 << endl;
 }
-
 
 int32_t main() {
     fast;
     int t = 1;
     cin >> t;
-    while (t--){
-        solve();
-    } 
+    while (t--) solve();
     return 0;
 }
