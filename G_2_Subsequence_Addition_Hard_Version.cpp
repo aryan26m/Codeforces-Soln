@@ -186,9 +186,7 @@ ans|=(sum);
     else{
         cout<<"YES"<<endl;
     }
-
 }
-
 int32_t main() {
     fast;
     int t = 1;
