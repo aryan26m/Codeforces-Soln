@@ -154,31 +154,33 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
-long long modPow(long long base, long long exp) {
-    long long result = 1;
-    base %= MOD; // handle large base
-    while (exp > 0) {
-        if (exp & 1)  // if current bit is set
-            result = (result * base) % MOD;
-        base = (base * base) % MOD;
-        exp >>= 1;   // divide exponent by 2
-    }
-    return result;
+int checker(string &s , char c, int l, int r) {
+if(l == r){
+if(s[l] == c) return 0;
+else return 1;
 }
-
+int c1=0,c2=0,mid;
+mid=(l+r)/2;
+for(int i=l;i <= mid; i++){
+if(s[i] != c){
+    ++c1;
+}}
+for(int i=r; i>mid; i-- ){
+if(s[i] != c)++c2;
+}
+int x=checker(s, c+1, l, mid);
+int y=checker(s, c+1, mid+1, r);
+return min(c1+y, c2+x);
+}
 // Solve Function
 void solve() {
     // Write your logic here
-    int n,k;
-    cin>>n>>k;
-    bitset <31> b1(k);
-int ans=0;
-    for(int i=0;i<31;i++){
-        if(b1[i]==1){
-            ans=(ans+modPow(n,i))%MOD;
-        }
-    }
-    cout<<ans<<endl;
+    int n;
+    cin>>n;
+    string s;
+    cin>>s;
+    int ans=checker(s,'a',0,n-1);
+       cout<<ans<<endl;
 }
 
 int32_t main() {

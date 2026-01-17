@@ -154,31 +154,17 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
-long long modPow(long long base, long long exp) {
-    long long result = 1;
-    base %= MOD; // handle large base
-    while (exp > 0) {
-        if (exp & 1)  // if current bit is set
-            result = (result * base) % MOD;
-        base = (base * base) % MOD;
-        exp >>= 1;   // divide exponent by 2
-    }
-    return result;
-}
 
 // Solve Function
 void solve() {
     // Write your logic here
-    int n,k;
-    cin>>n>>k;
-    bitset <31> b1(k);
-int ans=0;
-    for(int i=0;i<31;i++){
-        if(b1[i]==1){
-            ans=(ans+modPow(n,i))%MOD;
+    int n,m;
+    cin>>n>>m;
+       for(int i=1;i<=n;i++){
+        for(int j=1;j<=m;j++){
+            cout<<((i%4<=1)!=(j%4<=1))<<" \n"[j==m];
         }
     }
-    cout<<ans<<endl;
 }
 
 int32_t main() {
