@@ -10,11 +10,11 @@ void _print(long double t) { cerr << t; }
 void _print(char t) { cerr << t; }
 void _print(const string &t) { cerr << t; }
 void _print(bool t) { cerr << (t ? "true" : "false"); }
-template <class T, class U> void _print(const pair<T, U> &p) { cerr << '{'; _print(p.mp); cerr << ", "; _print(p.second); cerr << '}'; }
+template <class T, class U> void _print(const pair<T, U> &p) { cerr << '{'; _print(p.first); cerr << ", "; _print(p.second); cerr << '}'; }
 template <class T> void _print(const vector<T> &v) { cerr << '['; for (size_t i = 0; i < v.size(); ++i) { _print(v[i]); if (i + 1 < v.size()) cerr << ", "; } cerr << ']'; }
 template <class T> void _print(const set<T> &s) { cerr << '{'; bool f = true; for (auto &x : s) { if (!f) cerr << ", "; _print(x); f = false; } cerr << '}'; }
 template <class T> void _print(const multiset<T> &s) { cerr << '{'; bool f = true; for (auto &x : s) { if (!f) cerr << ", "; _print(x); f = false; } cerr << '}'; }
-template <class K, class V> void _print(const map<K, V> &m) { cerr << '{'; bool f = true; for (auto &kv : m) { if (!f) cerr << ", "; _print(kv.mp); cerr << ": "; _print(kv.second); f = false; } cerr << '}'; }
+template <class K, class V> void _print(const map<K, V> &m) { cerr << '{'; bool f = true; for (auto &kv : m) { if (!f) cerr << ", "; _print(kv.first); cerr << ": "; _print(kv.second); f = false; } cerr << '}'; }
 #define debug(x) do { cerr << #x << " = "; _print(x); cerr << '\n'; } while(0)
 #else
 #define debug(x) do {} while(0)
@@ -154,48 +154,29 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
-
 // Solve Function
 void solve() {
-    int n,m,k;
-    cin>>n>>m>>k;
-    vi a = enterv(n);
-    vi b = enterv(m);
-    string s; cin>>s;
-    sort(b.begin(), b.end());
+    int n; 
+    cin >> n;
+    vi v = enterv(n);    
+    unordered_set<int> st(v.begin(), v.end());
+    int ans = -1;
 
-    unordered_map<int, int> mp;
-    mp.reserve(k*2+10);
-    int pref = 0;
-    mp[pref] = 0;
-    for (int i = 1; i <= k; ++i) {
-        if (s[i-1] == 'L') pref--;
-        else pref++;
-        if (!mp.count(pref)) mp[pref] = i;
-    }
-
-    vector<int> arr(k+2, 0);
-    for (int i = 0; i < n; ++i) {
-        int ai = a[i];
-        int dt = k+1; 
-        auto it = lower_bound(b.begin(), b.end(), ai);
-        if (it != b.end()) {
-            int d = (*it) - ai;
-            if (mp.count(d)) dt = min(dt, mp[d]);
+    for (int k = 1; k < 1024; ++k) {
+        bool chck = true;
+        for (int s : v) {
+            if (st.find(s ^ k) == st.end()) {
+                chck = false;
+                break;
+            }
         }
-        if (it != b.begin()) {
-            int d = (*(it-1)) - ai;
-            if (mp.count(d)) dt = min(dt, mp[d]);
+        if (chck) {
+            ans = k;
+            break; 
         }
-        if (dt <= k) arr[dt]++;
     }
 
-    int cnt = n;
-    for (int i = 1; i <= k; ++i) {
-        cnt -= arr[i];
-        cout << cnt << " ";
-    }
-    cout<<endl;
+    cout << ans << endl;
 }
 
 int32_t main() {

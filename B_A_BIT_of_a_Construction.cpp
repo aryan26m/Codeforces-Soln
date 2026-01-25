@@ -10,11 +10,11 @@ void _print(long double t) { cerr << t; }
 void _print(char t) { cerr << t; }
 void _print(const string &t) { cerr << t; }
 void _print(bool t) { cerr << (t ? "true" : "false"); }
-template <class T, class U> void _print(const pair<T, U> &p) { cerr << '{'; _print(p.mp); cerr << ", "; _print(p.second); cerr << '}'; }
+template <class T, class U> void _print(const pair<T, U> &p) { cerr << '{'; _print(p.first); cerr << ", "; _print(p.second); cerr << '}'; }
 template <class T> void _print(const vector<T> &v) { cerr << '['; for (size_t i = 0; i < v.size(); ++i) { _print(v[i]); if (i + 1 < v.size()) cerr << ", "; } cerr << ']'; }
 template <class T> void _print(const set<T> &s) { cerr << '{'; bool f = true; for (auto &x : s) { if (!f) cerr << ", "; _print(x); f = false; } cerr << '}'; }
 template <class T> void _print(const multiset<T> &s) { cerr << '{'; bool f = true; for (auto &x : s) { if (!f) cerr << ", "; _print(x); f = false; } cerr << '}'; }
-template <class K, class V> void _print(const map<K, V> &m) { cerr << '{'; bool f = true; for (auto &kv : m) { if (!f) cerr << ", "; _print(kv.mp); cerr << ": "; _print(kv.second); f = false; } cerr << '}'; }
+template <class K, class V> void _print(const map<K, V> &m) { cerr << '{'; bool f = true; for (auto &kv : m) { if (!f) cerr << ", "; _print(kv.first); cerr << ": "; _print(kv.second); f = false; } cerr << '}'; }
 #define debug(x) do { cerr << #x << " = "; _print(x); cerr << '\n'; } while(0)
 #else
 #define debug(x) do {} while(0)
@@ -157,47 +157,30 @@ struct UnionFind {
 
 // Solve Function
 void solve() {
-    int n,m,k;
-    cin>>n>>m>>k;
-    vi a = enterv(n);
-    vi b = enterv(m);
-    string s; cin>>s;
-    sort(b.begin(), b.end());
-
-    unordered_map<int, int> mp;
-    mp.reserve(k*2+10);
-    int pref = 0;
-    mp[pref] = 0;
-    for (int i = 1; i <= k; ++i) {
-        if (s[i-1] == 'L') pref--;
-        else pref++;
-        if (!mp.count(pref)) mp[pref] = i;
-    }
-
-    vector<int> arr(k+2, 0);
-    for (int i = 0; i < n; ++i) {
-        int ai = a[i];
-        int dt = k+1; 
-        auto it = lower_bound(b.begin(), b.end(), ai);
-        if (it != b.end()) {
-            int d = (*it) - ai;
-            if (mp.count(d)) dt = min(dt, mp[d]);
+      int n, k;
+        cin >> n >> k;
+        vector<int> a(n);
+        if (n == 1) {
+            a[0] = k;
         }
-        if (it != b.begin()) {
-            int d = (*(it-1)) - ai;
-            if (mp.count(d)) dt = min(dt, mp[d]);
+        else {
+            int msb = 0;
+            for (int i = 0; i < 31; i++) {
+                if (k & (1 << i)) {
+                    msb = i;
+                }
+            }
+            a[0] = (1 << msb) - 1;
+            a[1] = k - a[0];
+            for (int i = 2; i < n; i++) {
+                a[i] = 0;
+            }
         }
-        if (dt <= k) arr[dt]++;
-    }
-
-    int cnt = n;
-    for (int i = 1; i <= k; ++i) {
-        cnt -= arr[i];
-        cout << cnt << " ";
-    }
-    cout<<endl;
+        for (int i = 0; i < n; i++) {
+            cout << a[i] << " ";
+        }
+        cout<<'\n'; 
 }
-
 int32_t main() {
     fast;
     int t = 1;
