@@ -157,26 +157,34 @@ struct UnionFind {
 
 // Solve Function
 void solve() {
-     int n;
-        cin >> n;
-    vi a=enterv(n);
-    vi b=enterv(n);
-        sort(a.begin(), a.end());
-          vi pre(n+1,0);
-        for (int i = 1; i <= n; i++) {
-            pre[i] = pre[i - 1] + b[i - 1];
-        }
-
-       int ans = 0;
-  for (int i = 0; i < n; i++) {
-            int x = a[i];
-            int coin = n - i;
-            int cnt = upper_bound(pre.begin(), pre.end(), coin) - pre.begin() - 1;
-            ans = max(ans, x * cnt);
-        }
-
-        cout << ans << endl;
+    // Write your logic here
+    int n;
+    cin>>n;
+    vi v=enterv(n-1);
+   
+    vi ans(n);
+    ans[0]=v[0];
+    ans[n-1]=v[n-2];
+    int x=1;
+    for(int i=1;i<n-1;i++){
+       ans[x]=(v[i]|v[i-1]);
+       x++;
     }
+    bool check=true;
+    for(int i=0;i<n-1;i++){
+        if(v[i]!=(ans[i]&ans[i+1])){
+            check=false;
+            break;
+        }
+    }
+    if(check){
+
+        printArray(ans);
+    }
+    else{
+        cout<<-1<<endl;
+    }
+}
 
 int32_t main() {
     fast;

@@ -157,26 +157,36 @@ struct UnionFind {
 
 // Solve Function
 void solve() {
-     int n;
-        cin >> n;
-    vi a=enterv(n);
-    vi b=enterv(n);
-        sort(a.begin(), a.end());
-          vi pre(n+1,0);
-        for (int i = 1; i <= n; i++) {
-            pre[i] = pre[i - 1] + b[i - 1];
-        }
+    // Write your logic here
+    int n;
+    cin >> n;
+     vi a=enterv(n);
+    int mini = 1e18, maxi = -1e18;
 
-       int ans = 0;
-  for (int i = 0; i < n; i++) {
-            int x = a[i];
-            int coin = n - i;
-            int cnt = upper_bound(pre.begin(), pre.end(), coin) - pre.begin() - 1;
-            ans = max(ans, x * cnt);
-        }
-
-        cout << ans << endl;
+    for (int i = 0; i < n; i++) {
+        mini = min(mini,a[i]);
+        maxi = max(maxi,a[i]);
     }
+
+    vector<int> v=a;
+    sort(v.begin(),v.end());
+    int ans = 1e18;
+    bool chck = true;
+    for (int i = 0;i<n;i++) {
+        if (a[i]!=v[i]) {
+            chck=false;
+            int x =max(a[i]-mini,maxi-a[i]);
+            debug(x);
+            ans=min(ans,x);
+        }
+    }
+
+    if (chck) {
+        cout <<-1<< endl;
+    } else {
+        cout <<ans<< endl;
+    }
+}
 
 int32_t main() {
     fast;

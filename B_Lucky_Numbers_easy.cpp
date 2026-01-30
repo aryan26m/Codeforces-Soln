@@ -155,33 +155,31 @@ struct UnionFind {
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
 
+vector<int> v;
+
+void gen(string s, int four, int seven, int len) {
+    if ((int)s.size() == len) {
+        if (four == seven) v.push_back(stoll(s));
+        return;
+    }
+    gen(s + '4', four + 1, seven, len);
+    gen(s + '7', four, seven + 1, len);
+}
 // Solve Function
 void solve() {
-     int n;
-        cin >> n;
-    vi a=enterv(n);
-    vi b=enterv(n);
-        sort(a.begin(), a.end());
-          vi pre(n+1,0);
-        for (int i = 1; i <= n; i++) {
-            pre[i] = pre[i - 1] + b[i - 1];
-        }
-
-       int ans = 0;
-  for (int i = 0; i < n; i++) {
-            int x = a[i];
-            int coin = n - i;
-            int cnt = upper_bound(pre.begin(), pre.end(), coin) - pre.begin() - 1;
-            ans = max(ans, x * cnt);
-        }
-
-        cout << ans << endl;
+    // Write your logic here
+    int n;
+    cin>>n;
+     for (int i = 2; i <= 10; i += 2) {
+        gen("", 0, 0, i);
     }
+    sort(v.begin(), v.end());
+    auto it = lower_bound(v.begin(), v.end(), n);
+    cout << *it <<  endl;
+}
 
 int32_t main() {
     fast;
-    int t = 1;
-    cin >> t;
-    while (t--) solve();
+   solve();
     return 0;
 }

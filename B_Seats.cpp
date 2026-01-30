@@ -157,26 +157,50 @@ struct UnionFind {
 
 // Solve Function
 void solve() {
-     int n;
-        cin >> n;
-    vi a=enterv(n);
-    vi b=enterv(n);
-        sort(a.begin(), a.end());
-          vi pre(n+1,0);
-        for (int i = 1; i <= n; i++) {
-            pre[i] = pre[i - 1] + b[i - 1];
-        }
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
 
-       int ans = 0;
-  for (int i = 0; i < n; i++) {
-            int x = a[i];
-            int coin = n - i;
-            int cnt = upper_bound(pre.begin(), pre.end(), coin) - pre.begin() - 1;
-            ans = max(ans, x * cnt);
+    int cnt = 0;
+    int frst = -1;
+    int last = -1;
+    int crnt = 0;
+    for (int i = 0; i < n; i++) {
+        if (s[i]=='1') {
+            cnt++;
+            if (frst==-1) frst = i;
+            last = i;
         }
-
-        cout << ans << endl;
     }
+    // debug(s);
+    if (cnt == 0) {
+        cout << (n + 2) / 3 << endl;
+        return;
+     }
+      vector<int> v(n, 0);
+    for (int i = 0; i < n; ++i) {
+        if (s[i] == '1') {
+            if (i - 1 >= 0) v[i-1] = 1;
+            v[i] = 1;
+            if (i + 1 < n) v[i+1] = 1;
+        }
+    }
+
+    int added = 0;
+    for (int i = 0; i < n; ++i) {
+        if (s[i] == '0' && !v[i]) {
+            int pos = (i + 1 < n) ? i + 1 : i; 
+            added++;
+            if (pos - 1 >= 0) v[pos - 1] = 1;
+            v[pos] = 1;
+            if (pos + 1 < n) v[pos + 1] = 1;
+            s[pos] = '1';
+        }
+    }
+
+    cout << cnt + added << endl;
+}
 
 int32_t main() {
     fast;

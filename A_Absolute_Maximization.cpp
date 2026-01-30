@@ -157,26 +157,48 @@ struct UnionFind {
 
 // Solve Function
 void solve() {
-     int n;
-        cin >> n;
-    vi a=enterv(n);
-    vi b=enterv(n);
-        sort(a.begin(), a.end());
-          vi pre(n+1,0);
-        for (int i = 1; i <= n; i++) {
-            pre[i] = pre[i - 1] + b[i - 1];
+    // Write your logic here
+    int n;
+    cin>>n;
+    vi v=enterv(n);
+    vector<int> bits(15,0);
+    int maxi=*max_element(v.begin(),v.end());
+    int mini=*min_element(v.begin(),v.end());
+     if(maxi==mini){
+        cout<<0<<endl;
+        return;
+     }
+     else{
+        for(int i=0;i<n;i++){
+            for(int j=0;j<15;j++){
+                if((v[i]>>j)&1){
+                    bits[j]++;
+                }
+            }
         }
-
-       int ans = 0;
-  for (int i = 0; i < n; i++) {
-            int x = a[i];
-            int coin = n - i;
-            int cnt = upper_bound(pre.begin(), pre.end(), coin) - pre.begin() - 1;
-            ans = max(ans, x * cnt);
+        // debug(bits);
+        int newmini=0;
+        for(int i=0;i<15;i++){
+            if((mini>>i)&1){
+                if(bits[i]==n){
+                    newmini+=(1<<i);
+                }
+            }
         }
-
-        cout << ans << endl;
+        int newmaxi = 0;
+for(int i = 0; i < 15; i++){
+    if (maxi & (1 << i)) {
+        newmaxi |= (1 << i);
     }
+    else if (bits[i] > 0) {
+        newmaxi |= (1 << i);
+    }
+}
+
+        int ans=newmaxi-newmini;
+        cout<<ans<<endl;
+     }
+}
 
 int32_t main() {
     fast;
