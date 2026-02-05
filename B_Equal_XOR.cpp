@@ -154,60 +154,65 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
-int leftmostSetBit(unsigned int x) {
-    if (x == 0) return -1;
-    return 31 - __builtin_clz(x); 
-}
-int fn(int x, int y) {
-    int common = x & y;
-    if (common == 0) return y;
-
-    int q = y - common;
-
-    bitset<31> bxy(x | y);
-    bitset<31> bq(q);
-
-    int b = 1;
-    while (b <= common || ((x | q) & b)) {
-        b <<= 1;
-    }
-
-    int lim = __builtin_ctz(b);
-
-    int q1 = q;
-    for (int i = 0; i < lim; i++) {
-        if (bxy[i] == 0) {
-            q1 |= (1 << i);
-        }
-    }
-
-    int q2 = q;
-    for (int i = 0; i < lim; i++) {
-        if (bq[i]) q2 -= (1 << i);
-    }
-    q2 += b;
-
-    if (abs(y - q1) < abs(y - q2))
-        return q1;
-    return q2;
-}
-
-
 
 // Solve Function
 void solve() {
-    int x, y;
-    cin >> x >> y;
-
-    int q1 = fn(x, y);
-    int ans1 = abs(x - x) + abs(y - q1);
-    int p2 = fn(y, x);
-   int ans2 = abs(x - p2) + abs(y - y);
-    if (ans1 <= ans2) {
-        cout << x << " " << q1 << "\n";
-    } else {
-        cout << p2 << " " << y << "\n";
+    // Write your logic here
+    int n,k;
+    cin>>n>>k;
+    vi left=enterv(n);
+    vi right=enterv(n);
+    map<int,int> f1;
+    map<int,int> f2;
+    for(int i=0;i<left.size();i++){
+        f1[left[i]]++;
     }
+    for(int i=0;i<left.size();i++){
+        f2[right[i]]++;
+    }
+    int temp=k;
+    vector<int> ans1;
+    vector<int> ans2;
+    for(int i=1;i<=n;i++){
+          if(f1.find(i)!=f1.end()){
+            if(f1[i]==2 && k>0){
+                 ans1.pb(i);
+                 ans1.pb(i);
+                 k--;
+            }        
+        }
+    }
+    for(int i=1;i<=n;i++){
+          if(f2.find(i)!=f2.end()){
+            if(f2[i]==2 && temp>0){
+                 ans2.pb(i);
+                 ans2.pb(i);
+                 temp--;
+            }        
+        }
+    }
+    int cnt=0;
+        for(int i=1;i<=n;i++){
+            if(temp<=0){
+                break;
+            }
+            if(f2.find(i)!=f2.end() && f1.find(i)!=f1.end()){
+                if(f1[i]==1 && f2[i]==1 && temp>0)
+                {
+                   cnt++;
+                    ans1.pb(i);
+                    ans2.pb(i);
+                }
+                if(cnt==2){
+                    temp--;
+                    cnt=0;
+                }
+            }
+        }
+        printArray(ans1);
+        printArray(ans2);
+    
+    
 }
 
 int32_t main() {

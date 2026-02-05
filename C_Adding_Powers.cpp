@@ -154,66 +154,43 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
-int leftmostSetBit(unsigned int x) {
-    if (x == 0) return -1;
-    return 31 - __builtin_clz(x); 
-}
-int fn(int x, int y) {
-    int common = x & y;
-    if (common == 0) return y;
+void solve() {
+    int n;
+    int k;
+    cin >> n >> k;
+   vi a=enterv(n);
+    map<int, bool> used; 
 
-    int q = y - common;
+    for (int i = 0; i < n; i++) {
+        int x = a[i];
+// debug(x);
+        int pos = 0;
+        while (x > 0) {
 
-    bitset<31> bxy(x | y);
-    bitset<31> bq(q);
-
-    int b = 1;
-    while (b <= common || ((x | q) & b)) {
-        b <<= 1;
-    }
-
-    int lim = __builtin_ctz(b);
-
-    int q1 = q;
-    for (int i = 0; i < lim; i++) {
-        if (bxy[i] == 0) {
-            q1 |= (1 << i);
+            int digit = x % k;
+        if (digit > 1) {
+                cout << "NO"<<endl;
+                return;
+            }
+            if (digit == 1) {
+                if (used[pos]) {
+                    cout << "NO"<<endl;
+                    return;
+                }
+                used[pos] = true;
+            }
+            x /= k;
+            pos++;
         }
     }
 
-    int q2 = q;
-    for (int i = 0; i < lim; i++) {
-        if (bq[i]) q2 -= (1 << i);
-    }
-    q2 += b;
-
-    if (abs(y - q1) < abs(y - q2))
-        return q1;
-    return q2;
-}
-
-
-
-// Solve Function
-void solve() {
-    int x, y;
-    cin >> x >> y;
-
-    int q1 = fn(x, y);
-    int ans1 = abs(x - x) + abs(y - q1);
-    int p2 = fn(y, x);
-   int ans2 = abs(x - p2) + abs(y - y);
-    if (ans1 <= ans2) {
-        cout << x << " " << q1 << "\n";
-    } else {
-        cout << p2 << " " << y << "\n";
-    }
+    cout<<"YES"<<endl;
 }
 
 int32_t main() {
-    fast;
-    int t = 1;
-    cin >> t;
-    while (t--) solve();
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int t; cin >> t;
+    while(t--) solve();
     return 0;
 }

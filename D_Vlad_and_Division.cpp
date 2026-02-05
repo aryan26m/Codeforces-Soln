@@ -154,60 +154,33 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
-int leftmostSetBit(unsigned int x) {
-    if (x == 0) return -1;
-    return 31 - __builtin_clz(x); 
-}
-int fn(int x, int y) {
-    int common = x & y;
-    if (common == 0) return y;
+void solve() {
+    int n;
+    cin >> n;
+    vi a=enterv(n);
+    map<int,int> mp;
+    for (int x : a) mp[x]++;
 
-    int q = y - common;
+ int mask = (1LL << 31) - 1;
+    int ans = 0;
 
-    bitset<31> bxy(x | y);
-    bitset<31> bq(q);
-
-    int b = 1;
-    while (b <= common || ((x | q) & b)) {
-        b <<= 1;
-    }
-
-    int lim = __builtin_ctz(b);
-
-    int q1 = q;
-    for (int i = 0; i < lim; i++) {
-        if (bxy[i] == 0) {
-            q1 |= (1 << i);
+    for (auto &p : mp) {
+        int x = p.first;
+        int y = x ^ mask;
+        if (mp.find(x) == mp.end()) continue;
+        if (mp.find(y) != mp.end()) {
+            int cnt = min(mp[x], mp[y]);
+            ans += cnt;
+            mp[x] -= cnt;
+            mp[y] -= cnt;
         }
     }
 
-    int q2 = q;
-    for (int i = 0; i < lim; i++) {
-        if (bq[i]) q2 -= (1 << i);
+    for (auto &p : mp) {
+        ans += p.second;
     }
-    q2 += b;
 
-    if (abs(y - q1) < abs(y - q2))
-        return q1;
-    return q2;
-}
-
-
-
-// Solve Function
-void solve() {
-    int x, y;
-    cin >> x >> y;
-
-    int q1 = fn(x, y);
-    int ans1 = abs(x - x) + abs(y - q1);
-    int p2 = fn(y, x);
-   int ans2 = abs(x - p2) + abs(y - y);
-    if (ans1 <= ans2) {
-        cout << x << " " << q1 << "\n";
-    } else {
-        cout << p2 << " " << y << "\n";
-    }
+    cout << ans << endl;
 }
 
 int32_t main() {

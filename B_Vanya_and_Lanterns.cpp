@@ -154,66 +154,28 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
-int leftmostSetBit(unsigned int x) {
-    if (x == 0) return -1;
-    return 31 - __builtin_clz(x); 
-}
-int fn(int x, int y) {
-    int common = x & y;
-    if (common == 0) return y;
-
-    int q = y - common;
-
-    bitset<31> bxy(x | y);
-    bitset<31> bq(q);
-
-    int b = 1;
-    while (b <= common || ((x | q) & b)) {
-        b <<= 1;
-    }
-
-    int lim = __builtin_ctz(b);
-
-    int q1 = q;
-    for (int i = 0; i < lim; i++) {
-        if (bxy[i] == 0) {
-            q1 |= (1 << i);
-        }
-    }
-
-    int q2 = q;
-    for (int i = 0; i < lim; i++) {
-        if (bq[i]) q2 -= (1 << i);
-    }
-    q2 += b;
-
-    if (abs(y - q1) < abs(y - q2))
-        return q1;
-    return q2;
-}
-
-
 
 // Solve Function
 void solve() {
-    int x, y;
-    cin >> x >> y;
-
-    int q1 = fn(x, y);
-    int ans1 = abs(x - x) + abs(y - q1);
-    int p2 = fn(y, x);
-   int ans2 = abs(x - p2) + abs(y - y);
-    if (ans1 <= ans2) {
-        cout << x << " " << q1 << "\n";
-    } else {
-        cout << p2 << " " << y << "\n";
+    // Write your logic here
+    int n,l;
+    cin>>n>>l;
+    vi v=enterv(n);
+    sort(v.begin(),v.end());
+    double ans=0;
+    
+    ans=max(ans,v[0]*1.0);
+    for(int i=1;i<n;i++){
+        int x=v[i]-v[i-1];
+        ans=max(ans,x/2.0);
     }
+    ans=max(ans,(l-v[n-1])*1.0);
+    
+    cout<<fixed<<setprecision(10)<<ans<<endl;
 }
 
 int32_t main() {
     fast;
-    int t = 1;
-    cin >> t;
-    while (t--) solve();
+    solve();
     return 0;
 }
