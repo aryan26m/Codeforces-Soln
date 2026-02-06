@@ -154,32 +154,55 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
+vector<vector<int>> adj;
+vector<int> a;
+int n, m;
+int answer = 0;
 
-// Solve Function
-void solve() {
-    int b,g,x,y,n;
-    cin>>b>>g>>x>>y>>n;
-    if((x+y)>n){
-        cout<<-1<<endl;
+void dfs(int node, int parent, int cnt) {
+    if (a[node] == 1)
+        cnt++;
+    else
+        cnt = 0;
+
+    if (cnt > m) return;
+
+    bool isLeaf = true;
+
+    for (auto x : adj[node]) {
+        if (x == parent) continue;
+        isLeaf = false;
+        dfs(x, node, cnt);
     }
-    else{
-       int x1=b/x;
-       int y1=g/y;
-      int mini = (b + g + n - 1) / n;
-       int maxi=min(x1,y1);
-       if (mini <= maxi) {
-        cout << mini << endl;
-    } 
-    else {
-        cout << -1 << endl;
-    }
+
+    if (isLeaf) {
+        answer++;
     }
 }
 
+void solve() {
+    cin >> n >> m;
+
+    a.assign(n + 1, 0);
+    for (int i = 1; i <= n; i++)
+        cin >> a[i];
+
+    adj.assign(n + 1, vector<int>());
+
+    for (int i = 0; i < n - 1; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    dfs(1, 0, 0);
+    cout << answer << endl;
+}
+
+
 int32_t main() {
     fast;
-    int t = 1;
-    cin >> t;
-    while (t--) solve();
+ solve();
     return 0;
 }

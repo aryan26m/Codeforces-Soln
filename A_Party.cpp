@@ -154,32 +154,40 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
+vvi adj;
+int ans = 0;
+
+void dfs(int node, int depth){
+    ans = max(ans, depth);
+    for(auto v : adj[node]){
+        dfs(v, depth + 1);
+    }
+}
 
 // Solve Function
 void solve() {
-    int b,g,x,y,n;
-    cin>>b>>g>>x>>y>>n;
-    if((x+y)>n){
-        cout<<-1<<endl;
+        int n;
+    cin>>n;
+    adj.resize(n+1);
+     vector<int> parent(n + 1, -1);
+    for(int i=1;i<=n;i++){
+        int a;
+        cin>>a;
+          parent[i] = a;
+        if(a!=-1){
+            adj[a].pb(i);
+        }
     }
-    else{
-       int x1=b/x;
-       int y1=g/y;
-      int mini = (b + g + n - 1) / n;
-       int maxi=min(x1,y1);
-       if (mini <= maxi) {
-        cout << mini << endl;
-    } 
-    else {
-        cout << -1 << endl;
+      for(int i = 1; i <= n; i++){
+        if(parent[i] == -1){
+            dfs(i, 1);
+        }
     }
-    }
+    cout<<ans<<endl;
 }
 
 int32_t main() {
     fast;
-    int t = 1;
-    cin >> t;
-    while (t--) solve();
+   solve();
     return 0;
 }

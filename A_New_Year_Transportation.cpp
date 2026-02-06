@@ -154,32 +154,37 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
-
+int n;
+vi v;
+set<int> st;
+void dfs(int node){
+    if(node==n-1){
+        st.insert(node);
+        return;
+    }
+    st.insert(node);
+    dfs(node+v[node]);
+}
 // Solve Function
 void solve() {
-    int b,g,x,y,n;
-    cin>>b>>g>>x>>y>>n;
-    if((x+y)>n){
-        cout<<-1<<endl;
-    }
-    else{
-       int x1=b/x;
-       int y1=g/y;
-      int mini = (b + g + n - 1) / n;
-       int maxi=min(x1,y1);
-       if (mini <= maxi) {
-        cout << mini << endl;
-    } 
-    else {
-        cout << -1 << endl;
-    }
-    }
+    // Write your logic here
+    int t;
+    cin>>n>>t;
+    v=enterv(n-1);
+dfs(0);
+t--;
+if(st.find(t)!=st.end()){
+    cout<<"YES"<<endl;
+}
+else{    
+cout<<"NO"<<endl;
+}
+    // debug(t);
+
 }
 
 int32_t main() {
     fast;
-    int t = 1;
-    cin >> t;
-    while (t--) solve();
+solve();
     return 0;
 }

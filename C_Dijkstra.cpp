@@ -154,32 +154,73 @@ struct UnionFind {
     int size() { return set_size; }
     void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
 };
+#define F first
+#define S second
 
+vector<vector<pair<int,int>>> adj;
+int n,m;
+vector<bool> vis;
+vector<int> parent;
+vi dis;
+void sssp(int node){
+    priority_queue<pair<int,int>> pq;
+    dis[node]=0;
+    pq.push({0,node});
+    while (pq.size())
+    {
+        // debug(vis);
+          int x=pq.top().second;
+          pq.pop();
+          if(vis[x]==true) continue;
+          vis[x]=1;
+          for(auto v:adj[x]){
+                  if(dis[v.F]>dis[x]+v.S){
+                    dis[v.F]=dis[x]+v.S;
+                    parent[v.F]=x;
+                    pq.push({-dis[v.F],v.F});
+                  }
+          }
+    }
+    
+}
 // Solve Function
 void solve() {
-    int b,g,x,y,n;
-    cin>>b>>g>>x>>y>>n;
-    if((x+y)>n){
-        cout<<-1<<endl;
+    // Write your logic here
+    cin>>n>>m;
+    adj.resize(n+1);
+    vis.assign(n+1,false);
+    parent.assign(n+1,-1);
+    dis.assign(n+1,INF);
+    for(int i=0;i<m;i++){
+        int u,v,w;
+        cin>>u>>v>>w;
+        adj[u].pb({v,w});
+        adj[v].pb({u,w});
     }
-    else{
-       int x1=b/x;
-       int y1=g/y;
-      int mini = (b + g + n - 1) / n;
-       int maxi=min(x1,y1);
-       if (mini <= maxi) {
-        cout << mini << endl;
-    } 
-    else {
-        cout << -1 << endl;
-    }
-    }
+ sssp(1);
+
+if(dis[n] == INF){
+    cout << -1 << endl;
+    return;
+}
+
+vector<int> path;
+int cur = n;
+while(cur != -1){
+    path.push_back(cur);
+    cur = parent[cur];
+}
+
+reverse(path.begin(), path.end());
+for(int x : path){
+    cout << x << " ";
+}
+cout << endl;
+
 }
 
 int32_t main() {
     fast;
-    int t = 1;
-    cin >> t;
-    while (t--) solve();
+   solve();
     return 0;
 }

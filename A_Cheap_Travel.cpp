@@ -157,29 +157,27 @@ struct UnionFind {
 
 // Solve Function
 void solve() {
-    int b,g,x,y,n;
-    cin>>b>>g>>x>>y>>n;
-    if((x+y)>n){
-        cout<<-1<<endl;
+    // Write your logic here
+    int n,m,a,b;
+    cin>>n>>m>>a>>b;
+    int ans1=a*n;
+    int ans2=0;
+    if(n%m==0){
+        ans2+=(n/m)*b;
     }
     else{
-       int x1=b/x;
-       int y1=g/y;
-      int mini = (b + g + n - 1) / n;
-       int maxi=min(x1,y1);
-       if (mini <= maxi) {
-        cout << mini << endl;
-    } 
-    else {
-        cout << -1 << endl;
+        ans2+=((n/m)+1)*b;
+        int rem=n%m;
+        int ans3=(n/m)*b;
+        ans3+=(rem*a);
+        ans2=min(ans2,ans3);
     }
-    }
+    int answer=min(ans1,ans2);
+    cout<<answer<<endl;
 }
 
 int32_t main() {
     fast;
-    int t = 1;
-    cin >> t;
-    while (t--) solve();
+   solve();
     return 0;
 }
