@@ -161,7 +161,7 @@ void solve() {
     int n,m;
     cin>>n>>m;
     vvi v=enterv2D(n,m);
-    f
+    
  }
 
 int32_t main() {

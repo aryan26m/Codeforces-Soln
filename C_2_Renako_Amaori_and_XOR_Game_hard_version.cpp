@@ -121,68 +121,102 @@ void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
 
+// Union-Find (Disjoint Set Union)
+struct UnionFind {
+    int n, set_size, *parent, *rank;
+    UnionFind() {}
+    UnionFind(int a) {
+        n = set_size = a;
+        parent = new int[n + 1];
+        rank = new int[n + 1];
+        for (int i = 1; i <= n; i++) parent[i] = i, rank[i] = 1;
+    }
+    int find(int x) {
+        if (x != parent[x]) return parent[x] = find(parent[x]);
+        return x;
+    }
+    void merge(int x, int y) {
+        int xcur = find(x), ycur = find(y);
+        if (xcur == ycur) return;
+        if (rank[xcur] >= rank[ycur]) {
+            parent[ycur] = xcur;
+            rank[xcur] += rank[ycur];
+        } else {
+            parent[xcur] = ycur;
+            rank[ycur] += rank[xcur];
+        }
+        set_size--;
+    }
+    void reset() {
+        set_size = n;
+        for (int i = 1; i <= n; i++) parent[i] = i, rank[i] = 1;
+    }
+    int size() { return set_size; }
+    void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
+};
+
 // Solve Function
 void solve() {
     // Write your logic here
-    int n,q;
-cin>>n>>q;
-vi v=enterv(n);
-vector <int> pre;
-vector <int> zeros(n+1,0);
-vector <int> ones(n+1,0);
-pre.assign(n,0);
-if(v[0]==0){
-    zeros[1]=1;
-    ones[1]=0;
-}
-else{
-    zeros[1]=0;
-    ones[1]=1;
-}
-rep(i,1,n){
-    if(v[i]==v[i-1]){
-        pre[i]=1;
+    int n;
+    cin>>n;
+    vi a=enterv(n);
+    vi b=enterv(n);
+    int xoro=0;
+    // vector<pair<int,int>> v(31);
+    for(int i=0;i<n;i++){
+        xoro^=a[i];
+        // for(int j=0;j<31;j++){
+        //     if((a[i]>>j)&1){
+        //         if(i%2==0){
+        //             v[j].first+=1;
+        //         }
+        //         else{
+        //             v[j].second+=1;
+        //         }
+        //     }
+        // }
     }
-    if(v[i]==0){
-        zeros[i+1]=zeros[i]+1;
-        ones[i+1]=ones[i];
+    for(int i=0;i<n;i++){
+        xoro^=b[i];
+        // for(int j=0;j<31;j++){
+        //     if((b[i]>>j)&1){
+        //         if(i%2==0){
+        //             v[j].first+=1;
+        //         }
+        //         else{
+        //             v[j].second+=1;
+        //         }
+        //     }
+        // }
     }
-    else{
-        zeros[i+1]=zeros[i];
-        ones[i+1]=ones[i]+1;
+    // debug(xoro);
+    int leftmost = -1;
+    for(int i = 30; i >= 0; i--) {
+        if((xoro >> i) & 1) {
+            leftmost = i;
+            break;
+        }
     }
-}
-vector<int>sum(n);
-sum[0]=pre[0];
-rep(i,1,n){
-    sum[i]=sum[i-1]+pre[i];
-}
-for(int i=0;i<q;i++){
-    int l,r;
-    cin>>l>>r;
-    int ans=0;
-    bool check=false;
-    int cnt_ones=ones[r]-ones[l-1];
-    int cnt_zeros=zeros[r]-zeros[l-1];
-    if((cnt_ones%3!=0) || (cnt_zeros%3!=0)){
-       check=true;
-    }
-    if(sum[l-1]!=sum[r-1]){
-        ans=(r-l+1)/3;
+    // debug(leftmost);
+    if(xoro==0){
+        cout<<"Tie"<<endl;
     }
     else{
-        ans=(r-l+1)/3;
-        ans+=1;
+        for(int j=n-1;j>=0;j--){       
+            if(((a[j]>>leftmost)&1) ^ ((b[j]>>leftmost)&1)){
+                if(j%2==0){
+                    cout<<"Ajisai"<<endl;
+                }
+                else{
+                    cout<<"Mai"<<endl;
+                }
+                break;
+            }
+        }
     }
+}
 
-    if(check){
-        cout<<-1<<endl;
-    }
-    else{
-     cout<<ans<<endl;
-    }
-}
-}
 int32_t main() {
     fast;
     int t = 1;

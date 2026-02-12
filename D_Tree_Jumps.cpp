@@ -121,68 +121,89 @@ void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
 
+// Union-Find (Disjoint Set Union)
+struct UnionFind {
+    int n, set_size, *parent, *rank;
+    UnionFind() {}
+    UnionFind(int a) {
+        n = set_size = a;
+        parent = new int[n + 1];
+        rank = new int[n + 1];
+        for (int i = 1; i <= n; i++) parent[i] = i, rank[i] = 1;
+    }
+    int find(int x) {
+        if (x != parent[x]) return parent[x] = find(parent[x]);
+        return x;
+    }
+    void merge(int x, int y) {
+        int xcur = find(x), ycur = find(y);
+        if (xcur == ycur) return;
+        if (rank[xcur] >= rank[ycur]) {
+            parent[ycur] = xcur;
+            rank[xcur] += rank[ycur];
+        } else {
+            parent[xcur] = ycur;
+            rank[ycur] += rank[xcur];
+        }
+        set_size--;
+    }
+    void reset() {
+        set_size = n;
+        for (int i = 1; i <= n; i++) parent[i] = i, rank[i] = 1;
+    }
+    int size() { return set_size; }
+    void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
+};
+const int M=998244353;
+void dfs(int node, vi &level, vvi &adj){
+    for(int x : adj[node]){
+        level[x]=level[node]+1;
+        dfs(x, level, adj);
+    }
+}
 // Solve Function
 void solve() {
     // Write your logic here
-    int n,q;
-cin>>n>>q;
-vi v=enterv(n);
-vector <int> pre;
-vector <int> zeros(n+1,0);
-vector <int> ones(n+1,0);
-pre.assign(n,0);
-if(v[0]==0){
-    zeros[1]=1;
-    ones[1]=0;
+    int n;
+    cin>>n;
+    vi parent(n+1);
+   for(int i=2;i<=n;i++){
+    cin>>parent[i];
+   }
+   vi level(n+1,0);
+vvi adj(n+1);
+for(int i=2;i<=n;i++){
+    adj[parent[i]].pb(i);
 }
-else{
-    zeros[1]=0;
-    ones[1]=1;
+dfs(1, level, adj);
+// debug(level);
+vector<vector<int>> v(n+1);
+for(int i=1;i<=n;i++){
+    v[level[i]].pb(i);
 }
-rep(i,1,n){
-    if(v[i]==v[i-1]){
-        pre[i]=1;
-    }
-    if(v[i]==0){
-        zeros[i+1]=zeros[i]+1;
-        ones[i+1]=ones[i];
-    }
-    else{
-        zeros[i+1]=zeros[i];
-        ones[i+1]=ones[i]+1;
-    }
-}
-vector<int>sum(n);
-sum[0]=pre[0];
-rep(i,1,n){
-    sum[i]=sum[i-1]+pre[i];
-}
-for(int i=0;i<q;i++){
-    int l,r;
-    cin>>l>>r;
-    int ans=0;
-    bool check=false;
-    int cnt_ones=ones[r]-ones[l-1];
-    int cnt_zeros=zeros[r]-zeros[l-1];
-    if((cnt_ones%3!=0) || (cnt_zeros%3!=0)){
-       check=true;
-    }
-    if(sum[l-1]!=sum[r-1]){
-        ans=(r-l+1)/3;
-    }
-    else{
-        ans=(r-l+1)/3;
-        ans+=1;
-    }
 
-    if(check){
-        cout<<-1<<endl;
+// debug(v);
+
+int sum=0;
+vector<int> dp(n+1);
+for(int i=n;i>=1;i--){
+    if(v[i].empty()) continue;
+    int s=0;
+    for(int x : v[i]){
+            dp[x]=(1+sum)%M;
+            for(auto u : adj[x]){
+                dp[x]-=dp[u];
+                dp[x]=(dp[x]%M+M)%M;
+            }
+            s+=dp[x];
+            s%=M;
     }
-    else{
-     cout<<ans<<endl;
-    }
+    sum=s;
 }
+int ans=(sum+1)%M;
+cout<<ans<<endl;
 }
+
 int32_t main() {
     fast;
     int t = 1;

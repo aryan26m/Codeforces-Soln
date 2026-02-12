@@ -121,68 +121,65 @@ void push(map<int, int> &mp, int k, int v) {
     mp[k] += v;
 }
 
-// Solve Function
-void solve() {
-    // Write your logic here
-    int n,q;
-cin>>n>>q;
-vi v=enterv(n);
-vector <int> pre;
-vector <int> zeros(n+1,0);
-vector <int> ones(n+1,0);
-pre.assign(n,0);
-if(v[0]==0){
-    zeros[1]=1;
-    ones[1]=0;
-}
-else{
-    zeros[1]=0;
-    ones[1]=1;
-}
-rep(i,1,n){
-    if(v[i]==v[i-1]){
-        pre[i]=1;
+// Union-Find (Disjoint Set Union)
+struct UnionFind {
+    int n, set_size, *parent, *rank;
+    UnionFind() {}
+    UnionFind(int a) {
+        n = set_size = a;
+        parent = new int[n + 1];
+        rank = new int[n + 1];
+        for (int i = 1; i <= n; i++) parent[i] = i, rank[i] = 1;
     }
-    if(v[i]==0){
-        zeros[i+1]=zeros[i]+1;
-        ones[i+1]=ones[i];
+    int find(int x) {
+        if (x != parent[x]) return parent[x] = find(parent[x]);
+        return x;
     }
-    else{
-        zeros[i+1]=zeros[i];
-        ones[i+1]=ones[i]+1;
+    void merge(int x, int y) {
+        int xcur = find(x), ycur = find(y);
+        if (xcur == ycur) return;
+        if (rank[xcur] >= rank[ycur]) {
+            parent[ycur] = xcur;
+            rank[xcur] += rank[ycur];
+        } else {
+            parent[xcur] = ycur;
+            rank[ycur] += rank[xcur];
+        }
+        set_size--;
     }
-}
-vector<int>sum(n);
-sum[0]=pre[0];
-rep(i,1,n){
-    sum[i]=sum[i-1]+pre[i];
-}
-for(int i=0;i<q;i++){
-    int l,r;
-    cin>>l>>r;
-    int ans=0;
-    bool check=false;
-    int cnt_ones=ones[r]-ones[l-1];
-    int cnt_zeros=zeros[r]-zeros[l-1];
-    if((cnt_ones%3!=0) || (cnt_zeros%3!=0)){
-       check=true;
+    void reset() {
+        set_size = n;
+        for (int i = 1; i <= n; i++) parent[i] = i, rank[i] = 1;
     }
-    if(sum[l-1]!=sum[r-1]){
-        ans=(r-l+1)/3;
-    }
-    else{
-        ans=(r-l+1)/3;
-        ans+=1;
-    }
+    int size() { return set_size; }
+    void print() { for (int i = 1; i <= n; i++) cout << i << "->" << parent[i] << endl; }
+};
 
-    if(check){
-        cout<<-1<<endl;
+void solve() {
+    int n;
+    cin >> n;
+    vector<int> p(n), a(n);
+    for(int &x : p) cin >> x;
+    for(int &x : a) cin >> x;
+    vector<int> unique_a;
+    for(int i = 0; i < n; i++) {
+        if(i == 0 || a[i] != a[i-1]) {
+            unique_a.push_back(a[i]);
+        }
     }
-    else{
-     cout<<ans<<endl;
+    int ptr = 0;
+    for(int i = 0; i < n && ptr < unique_a.size(); i++) {
+        if(p[i] == unique_a[ptr]) {
+            ptr++;
+        }
+    }
+    if(ptr == unique_a.size()) {
+        cout << "YES" << endl;
+    } else {
+        cout << "NO" << endl;
     }
 }
-}
+
 int32_t main() {
     fast;
     int t = 1;
